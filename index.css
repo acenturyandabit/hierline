@@ -1,0 +1,16 @@
+html, body{
+	height:100%;
+	overflow:hidden;
+}
+
+div{
+	margin:0;
+}
+
+#hierarchy_div{
+	height:80%;	
+}
+
+.some_class{
+	width:100%;
+}
