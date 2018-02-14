@@ -1,8 +1,6 @@
-var itemCount=0;
 function dataItem(p, name){//initialiser for dataItem
 	//self properties
-	this.id=itemCount;//this property should be unique! I'm just going to assign it to a counter which increments every time we make a new element
-	itemCount++;
+	this.id=nodes.length;//does the same thing as before since all nodes should be in nodes[];
 	this.name = name;
 	this.longdesc="";
 	//div for the big block displays; just keeping it on hand. Might take up a ton of memory but we'll see
@@ -46,8 +44,12 @@ function dataItem(p, name){//initialiser for dataItem
 		return 0;
 	}
 }
-
-
+var nodes=[];//store all nodes in an array so we can quickly access them
+function makeNode(parent, name){
+	var p = new dataItem(parent,name);
+	nodes.push(p);
+	return p;
+}
 
 
 
@@ -66,10 +68,11 @@ function dataItem(p, name){//initialiser for dataItem
 
 //some basic functions
 var hier_svg;
-var all_set;//set containing all elements so i can delete them all quickly.
 function drawHierarchy(lastNode){
 	//clear everything
-	all_set.clear();
+	hier_svg.each(function(i, children) {
+		this.remove();
+	})
 	
 	var recursionDepth=-1;
 	
@@ -77,7 +80,41 @@ function drawHierarchy(lastNode){
 	var centrex=hier_svg.width()/2;
 	var item_height=20;
 	var item_width=40;
-	//recurisvely:
+	//draw direct children for navigation
+	for (var x of currentItem.children){
+		//draw the box
+		var tmp=hier_svg.rect(item_width, item_height);
+		tmp.attr({
+				x:((x.upperindex() - (currentItem.children.length-1)/2)*(item_width+5)-item_width/2+centrex),
+				y:hier_svg.height()+recursionDepth*(item_height+10),
+				id:x.id
+			}).click(selectNode);
+		//draw the stick
+		tmp=hier_svg.line(
+			(x.upperindex() - (currentItem.children.length-1)/2)*(item_width+5)+centrex,
+			hier_svg.height()+recursionDepth*(item_height+10),
+			(x.upperindex() - (currentItem.children.length-1)/2)*(item_width+5)+centrex,
+			hier_svg.height()+recursionDepth*(item_height+10)-5
+		).stroke({ width: 1 });
+		//draw line connecting children
+		tmp=hier_svg.line(
+				(-(currentItem.children.length-1)/2)*(item_width+5)+centrex,
+				hier_svg.height()+recursionDepth*(item_height+10)-5,
+				((currentItem.children.length-1)/2)*(item_width+5)+centrex,
+				hier_svg.height()+recursionDepth*(item_height+10)-5
+			).stroke({ width: 1 });
+			//draw upper little connector line
+			tmp=hier_svg.line(
+				centrex,
+				hier_svg.height()+recursionDepth*(item_height+10)-5,
+				centrex,
+				hier_svg.height()+recursionDepth*(item_height+10)-10
+			).stroke({ width: 1 });
+
+	}
+	recursionDepth--;
+	
+	//recurisvely:	
 	while (currentItem){ // while we haven't gone past the root level node
 		//draw currentItem and all its siblings
 		if (currentItem.parent){
@@ -86,9 +123,10 @@ function drawHierarchy(lastNode){
 				var tmp=hier_svg.rect(item_width, item_height);
 				tmp.attr({
 						x:((x.upperindex() - currentItem.upperindex())*(item_width+5)-item_width/2+centrex),
-						y:hier_svg.height()+recursionDepth*(item_height+10)
-					});
-				all_set.add(tmp);
+						y:hier_svg.height()+recursionDepth*(item_height+10),
+						id:x.id
+					}).click(selectNode);
+				if (x.id==lastNode.id)tmp.attr('fill','#00ff00');
 				//draw the stick
 				tmp=hier_svg.line(
 					((x.upperindex() - currentItem.upperindex())*(item_width+5)+centrex),
@@ -96,7 +134,7 @@ function drawHierarchy(lastNode){
 					((x.upperindex() - currentItem.upperindex())*(item_width+5)+centrex),
 					hier_svg.height()+recursionDepth*(item_height+10)-5
 				).stroke({ width: 1 });
-				all_set.add(tmp);
+				
 			}
 			//draw lines connecting all these siblings
 			tmp=hier_svg.line(
@@ -105,7 +143,7 @@ function drawHierarchy(lastNode){
 				((currentItem.parent.children.length -1 - currentItem.upperindex())*(item_width+5)+centrex),
 				hier_svg.height()+recursionDepth*(item_height+10)-5
 			).stroke({ width: 1 });
-			all_set.add(tmp);
+			
 			//move centre position for parent draw
 			centrex=(-currentItem.upperindex()+(currentItem.parent.children.length-1)/2)*(item_width+5)+centrex;
 			//draw upper little connector line
@@ -115,15 +153,15 @@ function drawHierarchy(lastNode){
 				centrex,
 				hier_svg.height()+recursionDepth*(item_height+10)-10
 			).stroke({ width: 1 });
-			all_set.add(tmp);
+			
 			}else{
 			var tmp=hier_svg.rect(item_width, item_height);
 				tmp.attr({
 						x:(centrex-item_width/2),
-						y:hier_svg.height()+recursionDepth*(item_height+10)
-					});
-				all_set.add(tmp);
-			//$("svg").append($('<rect x="' + centrex + '" y="'+recursionDepth*(item_height+3) +'" width="'+item_width+'" height="'+item_height+'"/>'));
+						y:hier_svg.height()+recursionDepth*(item_height+10),
+						id:0//root level node should always have id 0
+					}).click(selectNode);
+				if (0==lastNode.id)tmp.attr('fill','#00ff00');
 			
 		}
 		//do the same thing for the currentItem's target
@@ -131,6 +169,12 @@ function drawHierarchy(lastNode){
 		
 		currentItem=currentItem.parent;
 	}
+}
+
+function selectNode(e){
+	drawHierarchy(nodes[e.path[0].id]);
+	
+	
 }
 
 function drawTimeline(){
@@ -147,13 +191,12 @@ function drawTimeline(){
 $(document).ready(initialise);//register initialise() to be run when document loads - safer than just running it when this script is loaded because then we're guarunteed some elements will be loaded.
 function initialise(){
 	hier_svg = SVG('hierarchy_div').size($("body").width(), $("body").height()*0.2);
-	all_set=hier_svg.set();
 	//generate some sample nodes
-	var rootnode = new dataItem(undefined,"new project");
-	rootnode.children.push(new dataItem(rootnode,"split a"));
-	rootnode.children.push(new dataItem(rootnode,"split b"));
-	rootnode.children[1].children.push(new dataItem(rootnode.children[1],"split b"));
-	rootnode.children[1].children.push(new dataItem(rootnode.children[1],"split b.2"));
+	var rootnode = makeNode(undefined,"new project");
+	rootnode.children.push(makeNode(rootnode,"split a"));
+	rootnode.children.push(makeNode(rootnode,"split b"));
+	rootnode.children[1].children.push(makeNode(rootnode.children[1],"split b"));
+	rootnode.children[1].children.push(makeNode(rootnode.children[1],"split b.2"));
 	//draw a node (testing)
 	drawHierarchy(rootnode.children[1].children[1]);
 	
