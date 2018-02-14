@@ -8,24 +8,23 @@
 	
 </head>
 <body>
-	<h1>hello world</h1>
-
-	<div id="hierarchy_div" class="some_class">
-		<p>Experimenting with sizes</p>
-		<svg>
-			
-		</svg>
-		<div id="blocks"><!-- the middle block things-->
-			<div id="sampleblock">
-			<h2 class="taskName">Task<a class="editName right_align">&#x1F4DD;</a><a class="reanchor right_align">&#9875;</a><a class="addChildren right_align">+</a></h2>
-			</div>
+	<div id="top_bar">
+		<h1>Hierline :: projectname</h1>
+	</div>
+	<svg id="hierarchy_div" class="fill_screen"><!--didn't need the div around it -->
+		
+	</svg>
+	<div id="blocks"><!-- the middle block things-->
+		<div class="item_block">
+			<h2 class="taskName">Task<a class="addChildren right_align">+</a><a class="editName right_align">&#x1F4DD;</a><a class="reanchor right_align">&#9875;</a></h2>
+			<textarea></textarea>
+		</div>
+		<div id="addMore" class="item_block" onclick="moreBoxes()"><!-- moreBoxes will be defined in logic.js when i get to it-->
+			<div><div>+</div></div>
 		</div>
 		
-		
-		
-	</div>
-
-	<div class="some_class" style="height:10%">
+	</div>                     
+	<div class="fill_screen" style="height:10%">
 		<p>Further experimentation</p>
 	</div>
 </body>

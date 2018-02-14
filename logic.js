@@ -10,7 +10,13 @@ function dataItem(p){//initialiser for dataItem
 	//record the parent element and all the children for the node; just cos
 	this.parent = p;//reference to parent
 	this.children=[];//define an empty set. this will be filled with references to children.
-	if (this.parent)this.siblings = this.parent.children; //orphans dont have siblings 
+	if (this.parent){
+		this.siblings = this.parent.children; //orphans dont have siblings 
+		this.upperindex=function(){// upperindex might change so this is a function
+			index = this.parent.children.findIndex(x => x.id==this.id);
+			return index;
+		}
+	}
 	/*
 	javascript is kinda funny because there are some strange distinctions between an object and a reference. For example, if i do:
 	var i=5;
@@ -48,13 +54,12 @@ function dataItem(p){//initialiser for dataItem
 //some basic functions
 var rootnode = new dataItem(undefined);
 function drawHierarchy(lastNode){
-	//draw root node
-	//identify which child contains the lastNode
-	//draw that child and its children 
-	//if lastnode is a direct ancestor, draw it in expanded form
-	///////uhm nevermind better idea
-	//draw lastnode and all its siblings
+	//clear everything
+	$("svg").empty();
 	
+	var recursionDepth=0;
+	//draw lastnode and all its siblings
+	$("svg").append($('<rect x="'  '" y="something" width="something" height="something">some Text</div>'));
 	//draw lastnode's parent and all its siblings
 	//recurse until root node
 	
@@ -67,3 +72,18 @@ function drawTimeline(){
 	
 	
 }
+
+
+
+
+$(document).on("load",initialise);//register initialise() to be run when document loads - safer than just running it when this script is loaded because then we're guarunteed some elements will be loaded.
+function initialise(){
+	//generate some sample nodes
+	//draw a node (testing)
+	
+	
+	
+	
+	
+}
+

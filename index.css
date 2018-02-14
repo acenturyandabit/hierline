@@ -1,16 +1,99 @@
+/*general stuff */
 html, body{
 	height:100%;
 	overflow:hidden;
+	margin:0;
 }
 
 div{
 	margin:0;
 }
 
-#hierarchy_div{
-	height:80%;	
-}
-
-.some_class{
+.fill_screen{
 	width:100%;
 }
+/*the main divs scaled by percentage----------------*/
+#hierarchy_div{
+	height:20%;	
+}
+
+#blocks{
+	display:flex;
+	/*
+	https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Flexible_Box_Layout/Basic_Concepts_of_Flexbox - what i'm trying to achieve - learning yay
+	*/
+	height:50%;
+	
+}
+
+#top_bar{
+	height:10%;
+}
+/*top bar---------------*/
+h1{
+	margin:0;
+}
+
+
+
+
+
+
+
+
+
+
+
+/*the blocks---------------*/
+.right_align{
+	float:right;
+	/*make the little icon elements align right*/
+}
+.addChildren{
+	font-size:1.5em;/* apparently i have to remind the <a> that it's meant to be big*/
+}
+
+.item_block{
+	/*
+	https://developer.mozilla.org/en-US/docs/Web/CSS/Child_selectors - explains the >
+	*/
+	width:20vw;
+	/*vw means 'percentage of window width'; vh means 'percentage of window height', so 100vw is 100% of view width.*/
+	border-style:solid;
+	border-width:7px;
+	height:100%;
+	display:flex;
+	margin: 0 5px;
+	flex-direction: column
+}
+
+textarea{/* that multiline text box in each block*/
+	resize: none;
+	height:100%;
+	box-sizing:border-box;
+	margin:5px;
+}
+/*add more---------------*/
+#addMore{
+	border-style:dashed;
+	border-color:grey;
+	
+}
+
+/*http://vanseodesign.com/css/vertical-centering/*/
+#addMore>div{
+    display: table;
+	width:100%;
+	height:100%;
+}
+#addMore>div>div{
+    display: table-cell;
+    vertical-align: middle;
+	text-align:center;
+	font-size:200px;
+	color:gray;
+}
+
+
+
+
