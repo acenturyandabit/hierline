@@ -61,3 +61,9 @@ http://graphics.cs.wisc.edu/WP/cs559-sp2015/2015/02/09/svg-4-groups-transforms-r
 Getting rid of all the sample classes n stuff. You'll see them around enough anyways.
 ---
 rearranged blocks div outside of hierarchy div
+---
+an interesting speed test:
+https://jsperf.com/jquery-element-creationyay/19
+---
+http://svgtutorial.com/manipulating-svg-with-javascript/
+---
