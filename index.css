@@ -24,7 +24,7 @@ div{
 
 
 #top_bar{
-	background-color:blue;
+	background-color:lightblue;
 	height:10%;
 	display:flex;
 	flex-flow:row nowrap;

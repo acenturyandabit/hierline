@@ -62,7 +62,6 @@ function makeNode(parent, name){
 }
 function registerEvents(){
 	$(".taskNameBody").on("keydown",finishEdit);
-	$(".taskNameBody").on("click",startEdit);
 }
 
 
@@ -112,24 +111,24 @@ function drawHierarchy(lastNode){
 		if (x.children.length)tmp.attr("fill","#ffcccc");
 		//draw the stick
 		tmp=hier_svg.line(
-			(x.upperindex() - (currentItem.children.length-1)/2)*(item_width+5)+centrex,
-			hier_svg.height()+recursionDepth*(item_height+10),
-			(x.upperindex() - (currentItem.children.length-1)/2)*(item_width+5)+centrex,
-			hier_svg.height()+recursionDepth*(item_height+10)-5
+		(x.upperindex() - (currentItem.children.length-1)/2)*(item_width+5)+centrex,
+		hier_svg.height()+recursionDepth*(item_height+10),
+		(x.upperindex() - (currentItem.children.length-1)/2)*(item_width+5)+centrex,
+		hier_svg.height()+recursionDepth*(item_height+10)-5
 		).stroke({ width: 1 });
 		//draw line connecting children
 		tmp=hier_svg.line(
-			(-(currentItem.children.length-1)/2)*(item_width+5)+centrex,
-			hier_svg.height()+recursionDepth*(item_height+10)-5,
-			((currentItem.children.length-1)/2)*(item_width+5)+centrex,
-			hier_svg.height()+recursionDepth*(item_height+10)-5
+		(-(currentItem.children.length-1)/2)*(item_width+5)+centrex,
+		hier_svg.height()+recursionDepth*(item_height+10)-5,
+		((currentItem.children.length-1)/2)*(item_width+5)+centrex,
+		hier_svg.height()+recursionDepth*(item_height+10)-5
 		).stroke({ width: 1 });
 		//draw upper little connector line
 		tmp=hier_svg.line(
-			centrex,
-			hier_svg.height()+recursionDepth*(item_height+10)-5,
-			centrex,
-			hier_svg.height()+recursionDepth*(item_height+10)-10
+		centrex,
+		hier_svg.height()+recursionDepth*(item_height+10)-5,
+		centrex,
+		hier_svg.height()+recursionDepth*(item_height+10)-10
 		).stroke({ width: 1 });
 		//put their divs onto the blocks chain
 		//yay blockschain
@@ -221,70 +220,17 @@ function drawTimeline(){
 	
 }
 
-function loadFile(){
-	
-	
-	
-}
 
-function saveFile(){
-	window.URL = window.webkitURL || window.URL;
 
-  var prevLink = output.querySelector('a');
-  if (prevLink) {
-    window.URL.revokeObjectURL(prevLink.href);
-    output.innerHTML = '';
-  }
 
-  var bb = new Blob([typer.textContent], {type: MIME_TYPE});
 
-  var a = document.createElement('a');
-  a.download = container.querySelector('input[type="text"]').value;
-  a.href = window.URL.createObjectURL(bb);
-  a.textContent = 'Download ready';
-
-  a.dataset.downloadurl = [MIME_TYPE, a.download, a.href].join(':');
-  a.draggable = true; // Don't really need, but good practice.
-  a.classList.add('dragout');
-  
-  output.appendChild(a);
-
-  a.onclick = function(e) {
-    if ('disabled' in this.dataset) {
-      return false;
-    }
-
-    cleanUp(this);
-  };
-};
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-}
 
 
 $(document).ready(initialise);//register initialise() to be run when document loads - safer than just running it when this script is loaded because then we're guarunteed some elements will be loaded.
 function initialise(){
 	hier_svg = SVG('hierarchy_div').size($("body").width(), $("body").height()*0.2);
 	//generate some sample nodes
+	$("#loadfile").on("change",loadFile);
 	var rootnode = makeNode(undefined,"new project");
 	rootnode.children.push(makeNode(rootnode,"split a"));
 	rootnode.children.push(makeNode(rootnode,"split b"));
