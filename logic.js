@@ -230,7 +230,7 @@ $(document).ready(initialise);//register initialise() to be run when document lo
 function initialise(){
 	hier_svg = SVG('hierarchy_div').size($("body").width(), $("body").height()*0.2);
 	//generate some sample nodes
-	$("#loadfile").on("change",loadFile);
+	$("#loadFile").on("change",loadFile);
 	var rootnode = makeNode(undefined,"new project");
 	rootnode.children.push(makeNode(rootnode,"split a"));
 	rootnode.children.push(makeNode(rootnode,"split b"));
