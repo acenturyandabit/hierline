@@ -10,22 +10,32 @@
 </head>
 <body>
 	<div id="top_bar">
-		<h1>Hierline :: projectname</h1>
+	<h1>Heirline</h1>
+	<span>
+		<p>Load:<input type="file" id="myFile" onInput="loadFile()" accept=".heir"></p>
+		<a href="#" onclick="saveFile()">Save</p>
+	</span><!--href = "#" does nothing but makes it blue underlined. usually href="some_url_you_want_to_go_to.url"-->
 	</div>
 	<div  id="hierarchy_div" class="fill_screen">
 		
 	</div>
+	<div id="blockwrapper"> <!-- to hide the horizontal scroll bar:https://stackoverflow.com/questions/16670931/hide-scroll-bar-but-while-still-being-able-to-scroll -->
 	<div id="blocks"><!-- the middle block things-->
-		<div class="item_block">
-			<h2 class="taskName">Task<a class="addChildren right_align">+</a><a class="editName right_align">&#x1F4DD;</a><a class="reanchor right_align">&#9875;</a></h2>
-			<textarea></textarea>
-		</div>
+		
 		<div id="addMore" class="item_block" onclick="moreBoxes()"><!-- moreBoxes will be defined in logic.js when i get to it-->
 			<div><div>+</div></div>
 		</div>
 		
-	</div>                     
+	</div>
+	</div>
 	<div class="fill_screen" style="height:10%">
 		<p>Further experimentation</p>
 	</div>
+	
+	<!-- this task template div is invisible but we want to keep it so we can copy it when making new tasks -->
+	<div id="item_template" class="item_block">
+	<h2 class="taskName"><span class="taskNameBody" contentEditable>Task</span><a class="reanchor right_align">&#9875;</a></h2>
+		<textarea></textarea>
+	</div>
+	
 </body>

@@ -17,24 +17,27 @@ div{
 	height:20%;	
 }
 
-#blocks{
-	display:flex;
-	/*
-	https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Flexible_Box_Layout/Basic_Concepts_of_Flexbox - what i'm trying to achieve - learning yay
-	*/
+#blockwrapper{
 	height:50%;
-	
+	overflow:hidden;
 }
 
+
 #top_bar{
+	background-color:blue;
 	height:10%;
+	display:flex;
+	flex-flow:row nowrap;
+	align-items:center;
 }
 /*top bar---------------*/
 h1{
 	margin:0;
 }
-
-
+#top_bar>span{
+	position:absolute;
+	right:0;
+}
 
 
 
@@ -45,12 +48,13 @@ h1{
 
 
 /*the blocks---------------*/
+#item_template{
+	display:none;
+}
+
 .right_align{
 	float:right;
 	/*make the little icon elements align right*/
-}
-.addChildren{
-	font-size:1.5em;/* apparently i have to remind the <a> that it's meant to be big*/
 }
 
 .item_block{
@@ -65,6 +69,24 @@ h1{
 	display:flex;
 	margin: 0 5px;
 	flex-direction: column
+}
+#blocks{
+	display:flex;
+	/*
+	https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Flexible_Box_Layout/Basic_Concepts_of_Flexbox - what i'm trying to achieve - learning yay
+	*/
+	overflow-x:auto;
+	overflow-y:hidden;
+	height:100%;
+}
+#blocks>div{
+	height:90%;
+}
+/*https://css-tricks.com/pure-css-horizontal-scrolling/*/
+
+
+.item_block h2 a{
+	user-select:none; /*users shouldn't be able to select the anchor etc as they are buttons*/
 }
 
 textarea{/* that multiline text box in each block*/

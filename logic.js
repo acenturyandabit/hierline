@@ -4,7 +4,10 @@ function dataItem(p, name){//initialiser for dataItem
 	this.name = name;
 	this.longdesc="";
 	//div for the big block displays; just keeping it on hand. Might take up a ton of memory but we'll see
-	this.div=$(".item_block")[0].cloneNode(true);//not yet defined
+	this.div=$("#item_template")[0].cloneNode(true);//clone the template
+	this.div.classList.add("activeBlocks");
+	this.div.id="d_"+this.id;	
+	this.div.children[0].children[0].innerHTML=this.name;//set heading inside div to my name
 	//record the parent element and all the children for the node; just cos
 	this.parent = p;//reference to parent
 	this.children=[];//define an empty set. this will be filled with references to children.
@@ -43,6 +46,13 @@ function dataItem(p, name){//initialiser for dataItem
 		}
 		return 0;
 	}
+	
+	this.getPath=function(){
+		if (!this.parent)return this.name;
+		else return this.parent.getPath()+" :: " + this.name;
+		
+	}
+	
 }
 var nodes=[];//store all nodes in an array so we can quickly access them
 function makeNode(parent, name){
@@ -50,7 +60,10 @@ function makeNode(parent, name){
 	nodes.push(p);
 	return p;
 }
-
+function registerEvents(){
+	$(".taskNameBody").on("keydown",finishEdit);
+	$(".taskNameBody").on("click",startEdit);
+}
 
 
 /*
@@ -68,12 +81,18 @@ function makeNode(parent, name){
 
 //some basic functions
 var hier_svg;
+var currentNode;
 function drawHierarchy(lastNode){
+	currentNode=lastNode;
+	//change h1 to the path of the node
+	$("h1")[0].innerHTML="Heirline - " + lastNode.getPath();
+	
 	//clear everything
 	hier_svg.each(function(i, children) {
 		this.remove();
 	})
-	
+	$(".activeBlocks").remove();//class activeblocks will be given to "real" block divs
+	//remove them from the document but don't destroy them
 	var recursionDepth=-1;
 	
 	var currentItem=lastNode;
@@ -85,10 +104,12 @@ function drawHierarchy(lastNode){
 		//draw the box
 		var tmp=hier_svg.rect(item_width, item_height);
 		tmp.attr({
-				x:((x.upperindex() - (currentItem.children.length-1)/2)*(item_width+5)-item_width/2+centrex),
-				y:hier_svg.height()+recursionDepth*(item_height+10),
-				id:x.id
-			}).click(selectNode);
+			x:((x.upperindex() - (currentItem.children.length-1)/2)*(item_width+5)-item_width/2+centrex),
+			y:hier_svg.height()+recursionDepth*(item_height+10),
+			id:x.id
+		}).click(selectNode);
+		//if i have children then colour me pink
+		if (x.children.length)tmp.attr("fill","#ffcccc");
 		//draw the stick
 		tmp=hier_svg.line(
 			(x.upperindex() - (currentItem.children.length-1)/2)*(item_width+5)+centrex,
@@ -98,19 +119,22 @@ function drawHierarchy(lastNode){
 		).stroke({ width: 1 });
 		//draw line connecting children
 		tmp=hier_svg.line(
-				(-(currentItem.children.length-1)/2)*(item_width+5)+centrex,
-				hier_svg.height()+recursionDepth*(item_height+10)-5,
-				((currentItem.children.length-1)/2)*(item_width+5)+centrex,
-				hier_svg.height()+recursionDepth*(item_height+10)-5
-			).stroke({ width: 1 });
-			//draw upper little connector line
-			tmp=hier_svg.line(
-				centrex,
-				hier_svg.height()+recursionDepth*(item_height+10)-5,
-				centrex,
-				hier_svg.height()+recursionDepth*(item_height+10)-10
-			).stroke({ width: 1 });
-
+			(-(currentItem.children.length-1)/2)*(item_width+5)+centrex,
+			hier_svg.height()+recursionDepth*(item_height+10)-5,
+			((currentItem.children.length-1)/2)*(item_width+5)+centrex,
+			hier_svg.height()+recursionDepth*(item_height+10)-5
+		).stroke({ width: 1 });
+		//draw upper little connector line
+		tmp=hier_svg.line(
+			centrex,
+			hier_svg.height()+recursionDepth*(item_height+10)-5,
+			centrex,
+			hier_svg.height()+recursionDepth*(item_height+10)-10
+		).stroke({ width: 1 });
+		//put their divs onto the blocks chain
+		//yay blockschain
+		$("#addMore").before(x.div);
+		
 	}
 	recursionDepth--;
 	
@@ -122,46 +146,49 @@ function drawHierarchy(lastNode){
 				//draw the box
 				var tmp=hier_svg.rect(item_width, item_height);
 				tmp.attr({
-						x:((x.upperindex() - currentItem.upperindex())*(item_width+5)-item_width/2+centrex),
-						y:hier_svg.height()+recursionDepth*(item_height+10),
-						id:x.id
-					}).click(selectNode);
+					x:((x.upperindex() - currentItem.upperindex())*(item_width+5)-item_width/2+centrex),
+					y:hier_svg.height()+recursionDepth*(item_height+10),
+					id:x.id
+				}).click(selectNode);
 				if (x.id==lastNode.id)tmp.attr('fill','#00ff00');
+				else if (x.children.length)tmp.attr("fill","#ffcccc");
+				
 				//draw the stick
 				tmp=hier_svg.line(
-					((x.upperindex() - currentItem.upperindex())*(item_width+5)+centrex),
-					hier_svg.height()+recursionDepth*(item_height+10),
-					((x.upperindex() - currentItem.upperindex())*(item_width+5)+centrex),
-					hier_svg.height()+recursionDepth*(item_height+10)-5
+				((x.upperindex() - currentItem.upperindex())*(item_width+5)+centrex),
+				hier_svg.height()+recursionDepth*(item_height+10),
+				((x.upperindex() - currentItem.upperindex())*(item_width+5)+centrex),
+				hier_svg.height()+recursionDepth*(item_height+10)-5
 				).stroke({ width: 1 });
 				
 			}
 			//draw lines connecting all these siblings
 			tmp=hier_svg.line(
-				((-currentItem.upperindex())*(item_width+5)+centrex),
-				hier_svg.height()+recursionDepth*(item_height+10)-5,
-				((currentItem.parent.children.length -1 - currentItem.upperindex())*(item_width+5)+centrex),
-				hier_svg.height()+recursionDepth*(item_height+10)-5
+			((-currentItem.upperindex())*(item_width+5)+centrex),
+			hier_svg.height()+recursionDepth*(item_height+10)-5,
+			((currentItem.parent.children.length -1 - currentItem.upperindex())*(item_width+5)+centrex),
+			hier_svg.height()+recursionDepth*(item_height+10)-5
 			).stroke({ width: 1 });
 			
 			//move centre position for parent draw
 			centrex=(-currentItem.upperindex()+(currentItem.parent.children.length-1)/2)*(item_width+5)+centrex;
 			//draw upper little connector line
 			tmp=hier_svg.line(
-				centrex,
-				hier_svg.height()+recursionDepth*(item_height+10)-5,
-				centrex,
-				hier_svg.height()+recursionDepth*(item_height+10)-10
+			centrex,
+			hier_svg.height()+recursionDepth*(item_height+10)-5,
+			centrex,
+			hier_svg.height()+recursionDepth*(item_height+10)-10
 			).stroke({ width: 1 });
 			
 			}else{
 			var tmp=hier_svg.rect(item_width, item_height);
-				tmp.attr({
-						x:(centrex-item_width/2),
-						y:hier_svg.height()+recursionDepth*(item_height+10),
-						id:0//root level node should always have id 0
-					}).click(selectNode);
-				if (0==lastNode.id)tmp.attr('fill','#00ff00');
+			tmp.attr({
+				x:(centrex-item_width/2),
+				y:hier_svg.height()+recursionDepth*(item_height+10),
+				id:0//root level node should always have id 0
+			}).click(selectNode);
+			if (0==lastNode.id)tmp.attr('fill','#00ff00');
+			else tmp.attr("fill","#ffcccc");
 			
 		}
 		//do the same thing for the currentItem's target
@@ -169,12 +196,21 @@ function drawHierarchy(lastNode){
 		
 		currentItem=currentItem.parent;
 	}
+	registerEvents();//make sure all the div buttons do what they're meant to
 }
 
 function selectNode(e){
 	drawHierarchy(nodes[e.path[0].id]);
-	
-	
+}
+
+
+function finishEdit(e){
+	var node_id=e.currentTarget.parentElement.parentElement.id.split("_")[1];
+	nodes[node_id].name=e.currentTarget.innerHTML;
+	if (e.key=="Enter"){
+		$("body").focus();
+		return false;
+	}
 }
 
 function drawTimeline(){
@@ -185,7 +221,64 @@ function drawTimeline(){
 	
 }
 
+function loadFile(){
+	
+	
+	
+}
 
+function saveFile(){
+	window.URL = window.webkitURL || window.URL;
+
+  var prevLink = output.querySelector('a');
+  if (prevLink) {
+    window.URL.revokeObjectURL(prevLink.href);
+    output.innerHTML = '';
+  }
+
+  var bb = new Blob([typer.textContent], {type: MIME_TYPE});
+
+  var a = document.createElement('a');
+  a.download = container.querySelector('input[type="text"]').value;
+  a.href = window.URL.createObjectURL(bb);
+  a.textContent = 'Download ready';
+
+  a.dataset.downloadurl = [MIME_TYPE, a.download, a.href].join(':');
+  a.draggable = true; // Don't really need, but good practice.
+  a.classList.add('dragout');
+  
+  output.appendChild(a);
+
+  a.onclick = function(e) {
+    if ('disabled' in this.dataset) {
+      return false;
+    }
+
+    cleanUp(this);
+  };
+};
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+}
 
 
 $(document).ready(initialise);//register initialise() to be run when document loads - safer than just running it when this script is loaded because then we're guarunteed some elements will be loaded.
@@ -198,11 +291,12 @@ function initialise(){
 	rootnode.children[1].children.push(makeNode(rootnode.children[1],"split b"));
 	rootnode.children[1].children.push(makeNode(rootnode.children[1],"split b.2"));
 	//draw a node (testing)
-	drawHierarchy(rootnode.children[1].children[1]);
-	
-	
-	
-	
+	drawHierarchy(rootnode.children[1].children[1]);	
+}
+
+function moreBoxes(){
+	currentNode.children.push(makeNode(currentNode,"New node"));
+	drawHierarchy(currentNode);
 	
 }
 
