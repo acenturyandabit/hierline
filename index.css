@@ -14,7 +14,7 @@ div{
 }
 /*the main divs scaled by percentage----------------*/
 #hierarchy_div{
-	height:20%;	
+	height:15%;	
 }
 
 #blockwrapper{
@@ -25,21 +25,14 @@ div{
 
 #top_bar{
 	background-color:lightblue;
-	height:10%;
-	display:flex;
-	flex-flow:row nowrap;
-	align-items:center;
 }
 /*top bar---------------*/
 h1{
 	margin:0;
+	display:inline;
 }
-#top_bar>span{
-	position:absolute;
-	right:0;
-}
-#top_bar>span>a{
-	display:none;
+.topright{
+	float:right;
 }
 
 
@@ -63,15 +56,21 @@ h1{
 	/*
 	https://developer.mozilla.org/en-US/docs/Web/CSS/Child_selectors - explains the >
 	*/
-	width:20vw;
+	min-width:20vw;
 	/*vw means 'percentage of window width'; vh means 'percentage of window height', so 100vw is 100% of view width.*/
 	border-style:solid;
 	border-width:7px;
 	height:100%;
 	display:flex;
 	margin: 0 5px;
-	flex-direction: column
+	flex-direction: column;
+	
 }
+.taskName{
+	margin:0;
+	
+}
+
 #blocks{
 	display:flex;
 	/*

@@ -14,7 +14,6 @@ function generateSave(){
 		}
 		for (var j of i.children)node_bit.children.push(j.id);
 		saveData.push(node_bit);
-		
 	}		
 	return JSON.stringify(saveData);
 }
@@ -22,7 +21,6 @@ function generateSave(){
 const MIME_TYPE = 'application/json';
 function saveFile(){
 	$("#top_bar span a").remove();
-	
 	var bb = new Blob([generateSave()], {type: MIME_TYPE});
 	
 	var a = document.createElement('a');
@@ -35,6 +33,27 @@ function saveFile(){
 	a.click();
 };
 
+var changesMade;
+function autoSave(){
+	localStorage.removeItem("data");
+	var under_storage = window.localStorage;
+	under_storage.setItem('data',generateSave());
+}
+
+function autoLoad(){
+	var under_storage = window.localStorage;
+	var loadedData=under_storage.getItem('data');
+	loadedData=JSON.parse(loadedData);
+	if (loadedData){
+		nodes=[];
+		for (var i of loadedData){
+			var p=makeNode(nodes[i.parent],i.name);
+			p.longdesc=i.longdesc;
+			if (p.parent)p.parent.children.push(p);
+		}
+		drawHierarchy(nodes[0]);
+	}
+}
 
 function loadFile(e){
 	$("#loadFile")[0].parentElement.innerHTML=$("#loadFile")[0].parentElement.innerHTML.replace("Load:","Loading...");

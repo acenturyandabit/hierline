@@ -4,18 +4,21 @@
 	<link rel="stylesheet" href="index.css"></link>
 	<script src="jquery.min.js"></script> 
 	<script src="svg.min.js"></script> 	
-	<script src="logic.js"></script> 
+	
+	<script src="page.js"></script> 
 	<script src="fileFunctions.js"></script> 
+	<script src="hier.js"></script>
+	
 	
 </head>
 <body>
 	<div id="top_bar">
 	<h1>Heirline</h1>
-	<span>
-		<p>Load:<input type="file" id="loadFile" onInput="loadFile()" accept=".heir"></p>
-		<button onClick="saveFile()">Save</button>
-	</span><!--href = "#" does nothing but makes it blue underlined. usually href="some_url_you_want_to_go_to.url"-->
+	<p style="margin:0" class="right_align">Load:<input type="file" id="loadFile" onInput="loadFile()" accept=".heir"></p>
+	<a href="#" class="right_align" onclick="autoSave()" style="display:none">Autosave OK</a><button class="right_align"  onClick="saveFile()">Save to File...</button>
+	<!--href = "#" does nothing but makes it blue underlined. usually href="some_url_you_want_to_go_to.url"-->
 	</div>
+	<p id="status">Ready</p>
 	<div  id="hierarchy_div" class="fill_screen">
 		
 	</div>
@@ -34,7 +37,7 @@
 	
 	<!-- this task template div is invisible but we want to keep it so we can copy it when making new tasks -->
 	<div id="item_template" class="item_block">
-	<h2 class="taskName"><span class="taskNameBody" contentEditable>Task</span><a class="reanchor right_align">&#9875;</a></h2>
+	<h2 class="taskName"><span class="taskNameBody" contentEditable>Task</span><a class="trashcan right_align">&#128465;</a><a class="reanchor right_align">&#9875;</a></h2>
 		<textarea></textarea>
 	</div>
 	

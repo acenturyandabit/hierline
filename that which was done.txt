@@ -65,5 +65,13 @@ rearranged blocks div outside of hierarchy div
 an interesting speed test:
 https://jsperf.com/jquery-element-creationyay/19
 ---
-http://svgtutorial.com/manipulating-svg-with-javascript/
+http://svgjs.com/
 ---
+What's push?
+In programming we have a data structure called a vector. This is a self-expanding array; i.e. if you want to add additional elements to it you can add more than the size which you additionally set. 
+In order to do this, there is some backend memory allocation that must take place. push()'ing an element tells the processor to add that element.
+re: logic.js line 8
+---
+file loading:
+https://www.html5rocks.com/en/tutorials/file/dndfiles/
+https://w3c.github.io/FileAPI/#filereader-interface
