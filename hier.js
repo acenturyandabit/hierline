@@ -12,11 +12,11 @@ function dataItem(p, name,id) { //initialiser for dataItem
 	//cloning, adding events etc
 	this.div = $("#item_template")[0].cloneNode(true); //clone the template
 	this.div.classList.add("activeBlocks");
-	this.div.children[0].children[0].addEventListener("keydown",finishEdit);
+	this.div.children[0].children[0].addEventListener("change",finishEdit);
 	this.div.children[0].children[2].addEventListener("click",reanchor);
 	this.div.children[0].children[1].addEventListener("click",deleteNode);
 	this.div.id = "d_" + this.id;
-	this.div.children[0].children[0].innerHTML = this.name; //set heading inside div to my name
+	this.div.children[0].children[0].value = this.name; //set heading inside div to my name
 	//record the parent element and all the children for the node; just cos
 	this.parent = p; //reference to parent
 	this.children = []; //define an empty set. this will be filled with references to children.
@@ -83,14 +83,18 @@ function getNode(id){
 
 function selectNode(e) {
 	if (anchorID!=-1){
-		if (getNode(anchorID).contains(getNode(e.path[0].id))){
+		var sNode=getNode(anchorID);
+		if (sNode.contains(getNode(e.path[0].id))){
 			$("#status").html("Cannot anchor node on its children!");
 			anchorID=-1;
 			return;
 		}
-		getNode(anchorID).parent.children.splice(getNode(anchorID).parent.children.indexOf(getNode(anchorID)),1);
-		getNode(anchorID).parent=getNode(e.path[0].id);
-		getNode(e.path[0].id).children.push(getNode(anchorID));
+		
+		sNode.parent.children.splice(getNode(anchorID).parent.children.indexOf(getNode(anchorID)),1);
+		sNode.parent=getNode(e.path[0].id);
+		sNode.siblings=getNode(e.path[0].id).children;
+		getNode(e.path[0].id).children.push(sNode);
+		this.siblings = this.parent.children;
 		anchorID=-1;
 		$("#status").html("Select new anchor node");
 	}
@@ -100,12 +104,10 @@ function selectNode(e) {
 
 function finishEdit(e) {
 	var node_id = e.currentTarget.parentElement.parentElement.id.split("_")[1];
-	getNode(node_id).name = e.currentTarget.innerHTML;
-	if (e.key == "Enter") {
-		$("body").focus();
-		return false;
-	}
+	getNode(node_id).name = e.currentTarget.value;
+	drawHierarchy(currentNode);
 }
+
 var anchorID=-1;
 function reanchor(e) {
 	$("#status").html("Select new anchor node");

@@ -49,7 +49,6 @@ function autoLoad() {
 }
 
 function loadFile(e) {
-	$("#loadFile")[0].parentElement.innerHTML = $("#loadFile")[0].parentElement.innerHTML.replace("Load:", "Loading...");
 	var reader = new FileReader();
 	reader.onload = fileLoaded;
 	reader.readAsText(e.currentTarget.files[0], "UTF-8");

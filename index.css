@@ -14,11 +14,11 @@ div{
 }
 /*the main divs scaled by percentage----------------*/
 #hierarchy_div{
-	height:15%;	
+	height:20%;	
 }
 
 #blockwrapper{
-	height:50%;
+	height:80%;
 	overflow:hidden;
 }
 
@@ -34,7 +34,9 @@ h1{
 .topright{
 	float:right;
 }
-
+#topbar a{
+	display:none;
+}
 
 /*hierarchy---------------*/
 
@@ -47,6 +49,12 @@ h1{
 	display:none;
 }
 
+td, tr{
+	height:100%;
+}
+
+
+
 .right_align{
 	float:right;
 	/*make the little icon elements align right*/
@@ -54,13 +62,12 @@ h1{
 
 .item_block{
 	/*
-	https://developer.mozilla.org/en-US/docs/Web/CSS/Child_selectors - explains the >
+		https://developer.mozilla.org/en-US/docs/Web/CSS/Child_selectors - explains the >
 	*/
 	min-width:20vw;
 	/*vw means 'percentage of window width'; vh means 'percentage of window height', so 100vw is 100% of view width.*/
 	border-style:solid;
 	border-width:7px;
-	height:100%;
 	display:flex;
 	margin: 0 5px;
 	flex-direction: column;
@@ -74,14 +81,11 @@ h1{
 #blocks{
 	display:flex;
 	/*
-	https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Flexible_Box_Layout/Basic_Concepts_of_Flexbox - what i'm trying to achieve - learning yay
+		https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Flexible_Box_Layout/Basic_Concepts_of_Flexbox - what i'm trying to achieve - learning yay
 	*/
 	overflow-x:auto;
 	overflow-y:hidden;
 	height:100%;
-}
-#blocks>div{
-	height:90%;
 }
 /*https://css-tricks.com/pure-css-horizontal-scrolling/*/
 
@@ -96,6 +100,28 @@ textarea{/* that multiline text box in each block*/
 	box-sizing:border-box;
 	margin:5px;
 }
+
+#upperbox{
+	height:70%;
+	position:relative;
+	width:100%;
+	
+	
+}
+
+#upperbox>div:first-child{
+    position: absolute;
+    height: 100%;
+    display: flex;
+}
+
+#upperbox>div:last-child{
+	position:absolute;
+	left: 22vw;
+	width:80%;
+	height:100%;
+}
+
 /*add more---------------*/
 #addMore{
 	border-style:dashed;

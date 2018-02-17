@@ -112,6 +112,9 @@ function drawHierarchy(lastNode) {
 
 		currentItem = currentItem.parent;
 	}
+	
+	//insert current div into the sidebar
+	$("#selectedBox")[0].appendChild(lastNode.div);
 }
 
 //helper function draw node
@@ -140,12 +143,21 @@ function initialise() {
 	hier_svg = SVG('hierarchy_div').size($("body").width(), $("body").height() * 0.15);
 	//generate some sample nodes
 	$("#loadFile").on("change", loadFile);
+	$("html").on("keydown", escapeCheck);
 	var rootnode = makeNode(undefined, "new project");
 	//draw a node (testing)
 	setInterval(autoSave, 2000);
 	autoLoad();
 	currentNode=nodes[0];
 	drawHierarchy(currentNode);
+}
+
+function escapeCheck(e){
+	if (e.key=="Escape"){
+		$("#status").html("Ready");
+		anchorID=-1;
+		$("html").focus();
+	}
 }
 
 function moreBoxes() {
