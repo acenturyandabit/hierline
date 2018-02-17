@@ -105,7 +105,7 @@ function drawHierarchy(lastNode) {
 				});
 
 		} else {
-			drawNode(nodes[0],(centrex - item_width / 2),hier_svg.height() + recursionDepth * (item_height + 10),lastNode.id==0);
+			drawNode(nodes[0],(centrex - item_width / 2),hier_svg.height() + recursionDepth * (item_height + 10),lastNode==nodes[0]);
 		}
 		//do the same thing for the currentItem's target
 		recursionDepth--;
@@ -141,19 +141,14 @@ function initialise() {
 	//generate some sample nodes
 	$("#loadFile").on("change", loadFile);
 	var rootnode = makeNode(undefined, "new project");
-	rootnode.children.push(makeNode(rootnode, "split a"));
-	rootnode.children.push(makeNode(rootnode, "split b"));
-	rootnode.children[1].children.push(makeNode(rootnode.children[1], "split b"));
-	rootnode.children[1].children.push(makeNode(rootnode.children[1], "split b.2"));
 	//draw a node (testing)
-	drawHierarchy(rootnode);
 	setInterval(autoSave, 2000);
 	autoLoad();
-	currentNode=rootnode;
+	currentNode=nodes[0];
+	drawHierarchy(currentNode);
 }
 
 function moreBoxes() {
 	currentNode.children.push(makeNode(currentNode, "New node"));
 	drawHierarchy(currentNode);
-
 }

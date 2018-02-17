@@ -1,6 +1,9 @@
-function dataItem(p, name) { //initialiser for dataItem
+var count=0;
+function dataItem(p, name,id) { //initialiser for dataItem
 	//self properties
-	this.id = nodes.length; //does the same thing as before since all nodes should be in nodes[];
+	if (!id)this.id = Date.now()*10+count; //for deleting nodes i need strictly unique node ID's - this should generate unique ID's even between runs
+	else this.id=id;
+	count++;
 	this.name = name;
 	this.longdesc = "";
 	//div for the big block displays; just keeping it on hand. Might take up a ton of memory but we'll see
@@ -65,26 +68,39 @@ function dataItem(p, name) { //initialiser for dataItem
 
 }
 var nodes = []; //store all nodes in an array so we can quickly access them
-function makeNode(parent, name) {
-	var p = new dataItem(parent, name);
+function makeNode(parent, name,id) {
+	var p = new dataItem(parent, name,id);
 	nodes.push(p);
 	return p;
 }
+
+function getNode(id){
+	for (var i of nodes){
+		if (i.id==id)return i;
+	}//if none found then return nothing
+	return undefined;
+}
+
 function selectNode(e) {
 	if (anchorID!=-1){
-		//find where node is
-		nodes[anchorID].parent.children.splice(nodes[anchorID].parent.children.indexOf(nodes[anchorID]),1);
-		nodes[anchorID].parent=nodes[e.path[0].id]
-		nodes[e.path[0].id].children.push(nodes[anchorID]);
+		if (getNode(anchorID).contains(getNode(e.path[0].id))){
+			$("#status").html("Cannot anchor node on its children!");
+			anchorID=-1;
+			return;
+		}
+		getNode(anchorID).parent.children.splice(getNode(anchorID).parent.children.indexOf(getNode(anchorID)),1);
+		getNode(anchorID).parent=getNode(e.path[0].id);
+		getNode(e.path[0].id).children.push(getNode(anchorID));
 		anchorID=-1;
+		$("#status").html("Select new anchor node");
 	}
-	drawHierarchy(nodes[e.path[0].id]);
-	currentNode=nodes[e.path[0].id];
+	drawHierarchy(getNode(e.path[0].id));
+	currentNode=getNode(e.path[0].id);
 }
 
 function finishEdit(e) {
 	var node_id = e.currentTarget.parentElement.parentElement.id.split("_")[1];
-	nodes[node_id].name = e.currentTarget.innerHTML;
+	getNode(node_id).name = e.currentTarget.innerHTML;
 	if (e.key == "Enter") {
 		$("body").focus();
 		return false;
@@ -93,7 +109,11 @@ function finishEdit(e) {
 var anchorID=-1;
 function reanchor(e) {
 	$("#status").html("Select new anchor node");
-	anchorID=e.currentTarget.parentElement.parentElement.id.split("_")[2];
+	anchorID=e.currentTarget.parentElement.parentElement.id.split("_")[1];
 }
-function deleteNode() {}
+function deleteNode(e) {
+	var deleteID=e.currentTarget.parentElement.parentElement.id.split("_")[1];
+	getNode(deleteID).parent.children.splice(getNode(deleteID).parent.children.indexOf(getNode(deleteID)),1);
+	drawHierarchy(currentNode);
+}
 function drawTimeline() {}
