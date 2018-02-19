@@ -4,11 +4,11 @@
 	<link rel="stylesheet" href="index.css"></link>
 	<script src="jquery.min.js"></script> 
 	<script src="svg.min.js"></script> 	
-	
+	<title>HeirLine</title>
 	<script src="page.js"></script> 
 	<script src="fileFunctions.js"></script> 
 	<script src="hier.js"></script>
-	
+	<script src="line.js"></script>
 	
 </head>
 <body>
@@ -26,7 +26,7 @@
 				
 			</div>
 			<div id="blockwrapper"> <!-- to hide the horizontal scroll bar:https://stackoverflow.com/questions/16670931/hide-scroll-bar-but-while-still-being-able-to-scroll -->
-				<div id="blocks"><!-- the middle block things-->
+				<div id="blocks" class="specialScroll"><!-- the middle block things-->
 					
 					<div id="addMore" class="item_block" onclick="moreBoxes()"><!-- moreBoxes will be defined in logic.js when i get to it-->
 						<div><div>+</div></div>
@@ -37,13 +37,14 @@
 		</div>
 	</div>
 	
-	<div class="fill_screen" style="height:10%">
-		<p>Further experimentation</p>
+	<div id="timeline" class="specialScroll fill_screen" style="height:10%">
+		
 	</div>
 	
 	<!-- this task template div is invisible but we want to keep it so we can copy it when making new tasks -->
 	<div id="item_template" class="item_block">
 	<h2 class="taskName"><input type="text" value="Task"></input><a class="trashcan right_align">&#128465;</a><a class="reanchor right_align">&#9875;</a></h2>
+		<input type="date"></input>
 		<textarea></textarea>
 	</div>
 	

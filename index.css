@@ -34,7 +34,7 @@ h1{
 .topright{
 	float:right;
 }
-#topbar a{
+#top_bar a{
 	display:none;
 }
 
@@ -99,6 +99,7 @@ textarea{/* that multiline text box in each block*/
 	height:100%;
 	box-sizing:border-box;
 	margin:5px;
+	
 }
 
 #upperbox{
@@ -109,17 +110,17 @@ textarea{/* that multiline text box in each block*/
 	
 }
 
-#upperbox>div:first-child{
+#upperbox>div:last-child{
     position: absolute;
     height: 100%;
-    display: flex;
+	width:77%;
 }
 
-#upperbox>div:last-child{
+#upperbox>div:first-child{
 	position:absolute;
-	left: 22vw;
-	width:80%;
+	left: 78vw;
 	height:100%;
+	display: flex;
 }
 
 /*add more---------------*/
@@ -136,6 +137,7 @@ textarea{/* that multiline text box in each block*/
 	height:100%;
 }
 #addMore>div>div{
+	user-select:none;
     display: table-cell;
     vertical-align: middle;
 	text-align:center;

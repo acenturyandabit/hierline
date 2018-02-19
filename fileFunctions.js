@@ -3,11 +3,13 @@ function generateSave(node) {
 	/*
 	add myself then add my children
 	 */
+	 var underDate;
+	 if (node.taskDate)underDate=node.taskDate.valueOf();
 	var node_bit = {
 		id: node.id,
 		name: node.name,
 		longdesc: node.longdesc,
-		date: node.taskDate,
+		date: underDate,
 		parent: node.parent ? node.parent.id : undefined // ternary operator: bascially a mini if statement
 	}
 	saveList.push(node_bit);
@@ -74,7 +76,8 @@ function loadFromString(loadscript){
 		nodes = [];
 		for (var i of loadedData) {
 			var p = makeNode(getNode(i.parent), i.name, i.id);
-			p.longdesc = i.longdesc;
+			p.setlongdesc(i.longdesc);
+			if (i.date) p.setDate(i.date);
 			if (p.parent)p.parent.children.push(p);
 		}
 		drawHierarchy(nodes[0]);

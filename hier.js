@@ -13,6 +13,8 @@ function dataItem(p, name,id) { //initialiser for dataItem
 	this.div = $("#item_template")[0].cloneNode(true); //clone the template
 	this.div.classList.add("activeBlocks");
 	this.div.children[0].children[0].addEventListener("change",finishEdit);
+	this.div.children[2].addEventListener("change",longdescedit);
+	this.div.children[1].addEventListener("change",dateEdit);
 	this.div.children[0].children[2].addEventListener("click",reanchor);
 	this.div.children[0].children[1].addEventListener("click",deleteNode);
 	this.div.id = "d_" + this.id;
@@ -26,6 +28,10 @@ function dataItem(p, name,id) { //initialiser for dataItem
 			index = this.parent.children.findIndex(x => x.id == this.id);
 			return index;
 		}
+	}
+	this.setlongdesc=function(ld){
+		this.longdesc=ld;
+		this.div.children[2].value=this.longdesc;
 	}
 	/*
 	javascript is kinda funny because there are some strange distinctions between an object and a reference. For example, if i do:
@@ -42,8 +48,12 @@ function dataItem(p, name,id) { //initialiser for dataItem
 	As a general rule, if i is anything other than a direct value e.g. 1,2,3, "a","b","caterpillar", j is probably going to be a reference.
 	 */
 	//timeline
-	this.taskDate = new Date();
-
+	this.taskDate = undefined;
+	this.setDate= function(date){
+		if (!this.taskDate) this.taskDate=new Date();
+		this.taskDate.setTime(date);
+		this.div.children[1].value=this.taskDate.toISOString().split("T")[0];
+	}
 	//some functions which i'm sure will be useful
 	this.contains = function (item) { //does this node contain the node specified?
 		if (this == item)
@@ -82,24 +92,25 @@ function getNode(id){
 }
 
 function selectNode(e) {
+	var nid=e.path[0].id.split("_")[1];
 	if (anchorID!=-1){
 		var sNode=getNode(anchorID);
-		if (sNode.contains(getNode(e.path[0].id))){
+		if (sNode.contains(getNode(nid))){
 			$("#status").html("Cannot anchor node on its children!");
 			anchorID=-1;
 			return;
 		}
 		
 		sNode.parent.children.splice(getNode(anchorID).parent.children.indexOf(getNode(anchorID)),1);
-		sNode.parent=getNode(e.path[0].id);
-		sNode.siblings=getNode(e.path[0].id).children;
-		getNode(e.path[0].id).children.push(sNode);
+		sNode.parent=getNode(nid);
+		sNode.siblings=getNode(nid).children;
+		getNode(nid).children.push(sNode);
 		this.siblings = this.parent.children;
 		anchorID=-1;
 		$("#status").html("Select new anchor node");
 	}
-	drawHierarchy(getNode(e.path[0].id));
-	currentNode=getNode(e.path[0].id);
+	drawHierarchy(getNode(nid));
+	currentNode=getNode(nid);
 }
 
 function finishEdit(e) {
@@ -108,14 +119,25 @@ function finishEdit(e) {
 	drawHierarchy(currentNode);
 }
 
+function longdescedit(e){
+	var node_id = e.currentTarget.parentElement.id.split("_")[1];
+	getNode(node_id).longdesc = e.currentTarget.value;	
+}
+function dateEdit(e){
+	var node_id = e.currentTarget.parentElement.id.split("_")[1];
+	var t=new Date(e.currentTarget.value);
+	getNode(node_id).setDate(t.valueOf());	
+}
 var anchorID=-1;
 function reanchor(e) {
 	$("#status").html("Select new anchor node");
 	anchorID=e.currentTarget.parentElement.parentElement.id.split("_")[1];
 }
 function deleteNode(e) {
-	var deleteID=e.currentTarget.parentElement.parentElement.id.split("_")[1];
+	var div_to_delete=e.currentTarget.parentElement.parentElement;
+	var deleteID=div_to_delete.id.split("_")[1];
+	if (getNode(deleteID)==currentNode) currentNode=getNode(deleteID).parent;
 	getNode(deleteID).parent.children.splice(getNode(deleteID).parent.children.indexOf(getNode(deleteID)),1);
 	drawHierarchy(currentNode);
 }
-function drawTimeline() {}
+
