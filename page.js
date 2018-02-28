@@ -9,154 +9,52 @@ $(".some_class").add("click", function) means every time an element with some_cl
  */
 
 //some basic functions
-var hier_svg;
-var currentNode;
+
 var item_height = 20;
 var item_width = 60;
-function drawHierarchy(lastNode) {
-	currentNode = lastNode;
-	drawTimeline();
-	//change h1 to the path of the node
-	$("h1")[0].innerHTML = "Heirline - " + lastNode.getPath();
-
-	//clear everything
-	hier_svg.clear();
-	$(".activeBlocks").remove(); //class activeblocks will be given to "real" block divs
-	//remove them from the document but don't destroy them
-	var recursionDepth = -1;
-	var tmp;
-	var currentItem = lastNode;
-	var centrex = hier_svg.width() / 2;
-
-	//draw direct children for navigation
-	for (var x of currentItem.children) {
-		//draw the box
-		drawNode(x, ((x.upperindex() - (currentItem.children.length - 1) / 2) * (item_width + 5) - item_width / 2 + centrex), hier_svg.height() + recursionDepth * (item_height + 10), false);
-		//draw the stick
-		tmp = hier_svg.line(
-				(x.upperindex() - (currentItem.children.length - 1) / 2) * (item_width + 5) + centrex,
-				hier_svg.height() + recursionDepth * (item_height + 10),
-				(x.upperindex() - (currentItem.children.length - 1) / 2) * (item_width + 5) + centrex,
-				hier_svg.height() + recursionDepth * (item_height + 10) - 5).stroke({
-				width: 1
-			});
-
-		//draw line connecting children
-		tmp = hier_svg.line(
-				( - (currentItem.children.length - 1) / 2) * (item_width + 5) + centrex,
-				hier_svg.height() + recursionDepth * (item_height + 10) - 5,
-				((currentItem.children.length - 1) / 2) * (item_width + 5) + centrex,
-				hier_svg.height() + recursionDepth * (item_height + 10) - 5).stroke({
-				width: 1
-			});
-
-		//draw upper little connector line
-		tmp = hier_svg.line(
-				centrex,
-				hier_svg.height() + recursionDepth * (item_height + 10) - 5,
-				centrex,
-				hier_svg.height() + recursionDepth * (item_height + 10) - 10).stroke({
-				width: 1
-			});
-
-		//put their divs onto the blocks chain
-		//yay blockschain
-		$("#addMore").before(x.div);
-
+var starter_quotes=[
+	"Next level project management",
+	"Hit all them yeets!",
+	"By tomorrow...",
+	"Turbo Tasklist!",
+	"What do you call a prince's private jet?"
+];
+var currentScreen;
+/*
+0: domode
+1: hierarchy
+2: timeline
+*/
+function drawCurrentScreen(){
+	switch(currentScreen){
+		case 0:
+			showDoMode();
+			break;
+		case 1:
+			showHierarchy();
+			break;
+		case 2: 
+			showTimeline();
+			break;
 	}
-	recursionDepth--;
-
-	//recurisvely:
-	while (currentItem) { // while we haven't gone past the root level node
-		//draw currentItem and all its siblings
-		if (currentItem.parent) {
-			for (var x of currentItem.siblings) {
-				//draw the box
-				drawNode(x, ((x.upperindex() - currentItem.upperindex()) * (item_width + 5) - item_width / 2 + centrex), hier_svg.height() + recursionDepth * (item_height + 10), x.id == lastNode.id)
-				//draw the stick
-				tmp = hier_svg.line(
-						((x.upperindex() - currentItem.upperindex()) * (item_width + 5) + centrex),
-						hier_svg.height() + recursionDepth * (item_height + 10),
-						((x.upperindex() - currentItem.upperindex()) * (item_width + 5) + centrex),
-						hier_svg.height() + recursionDepth * (item_height + 10) - 5).stroke({
-						width: 1
-					});
-
-			}
-			//draw lines connecting all these siblings
-			tmp = hier_svg.line(
-					((-currentItem.upperindex()) * (item_width + 5) + centrex),
-					hier_svg.height() + recursionDepth * (item_height + 10) - 5,
-					((currentItem.parent.children.length - 1 - currentItem.upperindex()) * (item_width + 5) + centrex),
-					hier_svg.height() + recursionDepth * (item_height + 10) - 5).stroke({
-					width: 1
-				});
-
-			//move centre position for parent draw
-			centrex = (-currentItem.upperindex() + (currentItem.parent.children.length - 1) / 2) * (item_width + 5) + centrex;
-			//draw upper little connector line
-			tmp = hier_svg.line(
-					centrex,
-					hier_svg.height() + recursionDepth * (item_height + 10) - 5,
-					centrex,
-					hier_svg.height() + recursionDepth * (item_height + 10) - 10).stroke({
-					width: 1
-				});
-
-		} else {
-			drawNode(nodes[0], (centrex - item_width / 2), hier_svg.height() + recursionDepth * (item_height + 10), lastNode == nodes[0]);
-		}
-		//do the same thing for the currentItem's target
-		recursionDepth--;
-
-		currentItem = currentItem.parent;
-	}
-
-	//insert current div into the sidebar
-	$("#selectedBox")[0].appendChild(lastNode.div);
 }
 
-//helper function draw node
-function drawNode(node, x, y, state) {
-	//draw the box
-	var rect = hier_svg.rect(item_width, item_height).fill("#aaffff").click(selectNode).attr({
-			'x': x,
-			'y': y,
-			id: "br_" + node.id
-		}); ;
-
-	//if i am selected color me green
-	if (state)
-		rect.fill('#00ff00');
-	//if i have children then colour me pink
-	else if (node.children.length)
-		rect.fill("#ffcccc");
-	//draw name of node
-	var txt = hier_svg.text(node.name).attr('pointer-events', 'none').move(x, y);
-	var clip = hier_svg.clip().add(txt);
-
-	var clap = hier_svg.rect(item_width, item_height).move(x, y).click(selectNode).attr({
-			'x': x,
-			'y': y,
-			id: "tx_" + node.id
-		});
-	clap.clipWith(clip);
-}
 
 $(document).ready(initialise); //register initialise() to be run when document loads - safer than just running it when this script is loaded because then we're guarunteed some elements will be loaded.
 var MOUSE_OVER = false;
 function initialise() {
-	hier_svg = SVG('hierarchy_div').size($("body").width() * 0.8, $("body").height() * 0.15);
-	TLsvg=SVG('timeline').size($("body").width(), $("body").height() * 0.2);
+	//get a random quote
+	$("#top_bar>div>p").html(starter_quotes[Math.round(Math.random()*starter_quotes.length)])
+	rootNode=new dataItem("Tasks","rootNode");
 	//generate some sample nodes
 	$("#loadFile").on("change", loadFile);
+	$("#newTaskBox").on("keydown",enterCheck);
 	$("html").on("keydown", escapeCheck);
-	var rootnode = makeNode(undefined, "new project");
+	$("#domReanchor").on("click",domReanchor);
 	//draw a node (testing)
-	setInterval(autoSave, 2000);
+	setInterval(drawTimeline, 10000);
 	autoLoad();
-	currentNode = nodes[0];
-	drawHierarchy(currentNode);
+	//drawHierarchy(nodes[0]);
 	$('body').bind('mousewheel', function (e) {
 		if (MOUSE_OVER) {
 			if (e.preventDefault) {
@@ -179,40 +77,29 @@ function initialise() {
 		if (delta==0 || delta==-0)delta=e.originalEvent.deltaX;
 		e.currentTarget.scrollLeft+=delta/5;
 	});
-	$('#timeline').bind('mousewheel', function (e) {
-		var subscale_max=3;
-		var subscale_min=1.2;
-		var delta = e.originalEvent.deltaY;
-		if (delta==0 || delta==-0)delta=e.originalEvent.deltaX;
-		if (e.ctrlKey){
-			subscale+=delta*0.05;
-			if (subscale>subscale_max){if (scale>0){subscale=subscale_min;scale--;}else subscale=subscale_max;}
-			if (subscale<subscale_min){if (scale<4){subscale=subscale_max;scale++;}else subscale=subscale_min;}
-		}else{
-			TLC+=delta/5;
-		}
-		
-		drawTimeline();
-	});
+	currentScreen=0;
+	showDoMode();
 }
 
 function escapeCheck(e) {
 	if (e.key == "Escape") {
 		$("#status").html("Ready");
 		anchorID = -1;
+		$("#floaterTLbox").hide();
 		$("html").focus();
 	}
 	if (e.key == "s" && e.ctrlKey == true) {
 		autoSave();
 		$("#status").html("Saved locally. Autosave is on.");
-
 		return false;
 	}
 }
 
-function moreBoxes() {
-	var newNode = makeNode(currentNode, "New node");
-	currentNode.children.push(newNode);
-	drawHierarchy(currentNode);
-	newNode.div.parentElement.scrollLeft = 0.2 * window.innerWidth * newNode.upperindex();
+function enterCheck(e){
+	if (e.key == "Enter") {
+		moreBoxes();
+	}
+	
 }
+
+

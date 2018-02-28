@@ -9,41 +9,85 @@
 	<script src="fileFunctions.js"></script> 
 	<script src="hier.js"></script>
 	<script src="line.js"></script>
-	
+	<script src="domode.js"></script>
+	<script src="node.js"></script>
 </head>
 <body>
 	<div id="top_bar">
-		<h1>Heirline</h1>
-		<p style="margin:0" class="right_align">Load:<input type="file" id="loadFile" onInput="loadFile()" accept=".heir"></p>
-		<button class="right_align"  onClick="saveFile()">Save to File...</button>
-		<!--href = "#" does nothing but makes it blue underlined. usually href="some_url_you_want_to_go_to.url"-->
-	</div>
-	<p id="status">Ready</p>
-	<div id="upperbox">
-		<div id="selectedBox"></div>
-		<div>
-			<div  id="hierarchy_div" class="fill_screen">
-				
-			</div>
-			<div id="blockwrapper"> <!-- to hide the horizontal scroll bar:https://stackoverflow.com/questions/16670931/hide-scroll-bar-but-while-still-being-able-to-scroll -->
-				<div id="blocks" class="specialScroll"><!-- the middle block things-->
-					
-					<div id="addMore" class="item_block" onclick="moreBoxes()"><!-- moreBoxes will be defined in logic.js when i get to it-->
-						<div><div>+</div></div>
-					</div>
-					
-				</div>
-			</div>	
+		<div id="tb_LHS">
+			<h1>Heirline</h1>
+			<p>Inspire yourself.</p>
+		</div>
+		<div id="tb_RHS">
+			<img src="play_ico.png" onclick="showDoMode()"></img>
+			<img src="hier_ico.png" onclick="showHierarchy()"></img>
+			<img src="time_ico.png" onclick="showTimeline()"></img>
+			<img src="menu_ico.png"></img>
 		</div>
 	</div>
 	
-	<div id="timeline" class="specialScroll fill_screen" style="height:10%">
+	<div id="doModeScreen" class="mb_ex">
+		<div id="hasTask">
+			<h2> Current Task:</h2>
+			<br>
+			<input id="dm_tname" type="text"></input>
+			<p>Tags:<span contenteditable class="ce">Enter Tags...</span></p>
+			<textarea id="dm_tdesc"></textarea>
+			<p>Time since task started: </p>
+			<button onclick="taskDone()">DONE!</button><button>Split into subtasks</button><button id="domReanchor">Reschedule</button>
+		</div>
+		<div id="allDone">
+			<h2>All done!</h2>
+			<img src="flower.png"></img>
+			<p>Take a break. You've earned it.</p>
+			<p>Break time:</p>
+		</div>
 		
+	</div>	
+	<div id="hierarchy_div" class="mb_ex">
+		
+	</div>
+	
+	<div id="timeline" class="specialScroll mb_ex">
+		<p>View:<button>Day</button><button>Week</button><button>Month</button></p>
+	</div>
+	
+	
+	<div id="slideBar">
+		<div>
+			<div id="currentTaskBox">
+				<p>Current Task</p>
+			</div>
+			<div id="scrollContainer">
+				<p id="slbt">Up Next</p>
+				<div id="blocks" class="specialScroll">
+					
+				</div>
+			</div>
+		</div>
+		<div id="ntb">
+			<p>New task</p>
+			<div id="quickAdd">
+				<input type="text" placeholder="Task" id="newTaskBox"></input>
+				<br>
+				<br>
+				<button id="properAdd">Anchor</button><!--change to "Do now" on doModescreen-->
+				<button onclick="moreBoxes()">Quick add</button>
+			</div>
+		</div>
+		</div>
+		<div id="statusBar">
+		<p id="status">Ready</p>	
+	</div>
+	
+	<div id="floaterTLbox">
+		<input type="text" id="floaterTB"></input>
+		<button onClick="floaterTLboxDone()">Done</button>
 	</div>
 	
 	<!-- this task template div is invisible but we want to keep it so we can copy it when making new tasks -->
 	<div id="item_template" class="item_block">
-	<h2 class="taskName"><input type="text" value="Task"></input><a class="trashcan right_align">&#128465;</a><a class="reanchor right_align">&#9875;</a></h2>
+		<h2 class="taskName"><input type="text" value="Task"></input><a class="trashcan right_align">&#128465;</a><a class="reanchor right_align">&#9875;</a></h2>
 		<input type="date"></input>
 		<textarea></textarea>
 	</div>

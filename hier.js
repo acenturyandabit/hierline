@@ -1,152 +1,228 @@
-var count = 0;
-function dataItem(p, name, id) { //initialiser for dataItem
-	//self properties
-	if (!id)
-		this.id = Date.now() * 10 + count; //for deleting nodes i need strictly unique node ID's - this should generate unique ID's even between runs
-	else
-		this.id = id;
-	count++;
-	this.name = name;
-	this.longdesc = "";
-	//div for the big block displays; just keeping it on hand. Might take up a ton of memory but we'll see
+function showHierarchy(){
+	if (!currentNode)currentNode=nodes[0];
+	$("#doModeScreen").hide();
+	$("#currentTaskBox").show().css('display', 'flex');
+	$("#hierarchy_div").fadeIn();
+	$("#timeline").hide();
+	$("#slbt").html("To Organise");
+	$("#properAdd").html("Add Child");
+	$("#properAdd").off("click");
+	$("#properAdd").on("click",attachTo);
+	$("#scrollContainer").css("width","75%");
+	if (!HRcurrentNode)HRcurrentNode=rootNode;
+	drawHierarchy(HRcurrentNode);
+	currentScreen=1;
+	orgboxHR();
+}
 
+var rootNode;
+var HRcurrentNode;
+$(document).ready(HRinit);
+function HRinit(){
+	hier_svg = SVG('hierarchy_div').size($("body").width(), $("body").height() * 0.5);
+}
 
-	//cloning, adding events etc
-	this.div = $("#item_template")[0].cloneNode(true); //clone the template
-	this.div.classList.add("activeBlocks");
-	this.div.children[0].children[0].addEventListener("change", finishEdit);
-	this.div.children[2].addEventListener("change", longdescedit);
-	this.div.children[1].addEventListener("change", dateEdit);
-	this.div.children[0].children[2].addEventListener("click", reanchor);
-	this.div.children[0].children[1].addEventListener("click", deleteNode);
-	this.div.id = "d_" + this.id;
-	this.div.children[0].children[0].value = this.name; //set heading inside div to my name
-	//record the parent element and all the children for the node; just cos
-	this.parent = p; //reference to parent
-	this.children = []; //define an empty set. this will be filled with references to children.
-	if (this.parent) {
-		this.siblings = this.parent.children; //orphans dont have siblings
-		this.upperindex = function () { // upperindex might change so this is a function
-			index = this.parent.children.findIndex(x => x.id == this.id);
-			return index;
+function orgboxHR(){
+	$("#blocks>div").remove(); //class activeblocks will be given to "real" block divs
+	$("#currentTaskBox>div").remove();
+	$("#currentTaskBox")[0].appendChild(HRcurrentNode.div);
+	var count=0;
+	for (var i of nodes){
+		if(!i.parent && i!=currentNode){
+			$("#blocks")[0].appendChild(i.div);
+			count++;
 		}
+		if (count>10)break;
 	}
-	this.setlongdesc = function (ld) {
-		this.longdesc = ld;
-		this.div.children[2].value = this.longdesc;
+	$(".reanchor").html("&#9875;");
+	$(".reanchor").off("click");
+	$(".reanchor").on("click",reanchor);
+}
+
+var hier_svg;
+var currentNode;
+
+function drawHierarchy(lastNode) {
+	currentNode = lastNode;
+	//drawTimeline();
+	//change h1 to the path of the node
+	//$("h1")[0].innerHTML = "Heirline - " + lastNode.getPath();
+
+	//clear everything
+	hier_svg.clear();
+	//remove them from the document but don't destroy them
+	var recursionDepth = -1;
+	var tmp;
+	var currentItem = lastNode;
+	var centrex = hier_svg.width() / 2;
+	var cy=hier_svg.height()/2;
+	//draw direct children for navigation
+	for (var x of currentItem.children) {
+		//draw the box
+		drawNode(x, ((x.upperindex() - (currentItem.children.length - 1) / 2) * (item_width + 5) - item_width / 2 + centrex), cy + recursionDepth * (item_height + 10), false);
+		//draw the stick
+		tmp = hier_svg.line(
+				(x.upperindex() - (currentItem.children.length - 1) / 2) * (item_width + 5) + centrex,
+				cy + recursionDepth * (item_height + 10),
+				(x.upperindex() - (currentItem.children.length - 1) / 2) * (item_width + 5) + centrex,
+				cy + recursionDepth * (item_height + 10) - 5).stroke({
+				width: 1
+			});
+
+		//draw line connecting children
+		tmp = hier_svg.line(
+				( - (currentItem.children.length - 1) / 2) * (item_width + 5) + centrex,
+				cy + recursionDepth * (item_height + 10) - 5,
+				((currentItem.children.length - 1) / 2) * (item_width + 5) + centrex,
+				cy + recursionDepth * (item_height + 10) - 5).stroke({
+				width: 1
+			});
+
+		//draw upper little connector line
+		tmp = hier_svg.line(
+				centrex,
+				cy + recursionDepth * (item_height + 10) - 5,
+				centrex,
+				cy + recursionDepth * (item_height + 10) - 10).stroke({
+				width: 1
+			});
+
+		//put their divs onto the blocks chain
+		//yay blockschain
+		$("#blocks")[0].appendChild(x.div);
+
 	}
-	/*
-	javascript is kinda funny because there are some strange distinctions between an object and a reference. For example, if i do:
-	var i=5;
-	var j=i;
-	i=6;
-	j will be equal to 5 still, as per usual
-	but if i do:
-	var i={}; // declare i as an object
-	i.property=5;
-	var j=i;
-	i.property=6;
-	then j.property will be equal to 6; because j is a reference to i instead of a separate object.
-	As a general rule, if i is anything other than a direct value e.g. 1,2,3, "a","b","caterpillar", j is probably going to be a reference.
-	 */
-	//timeline
-	this.taskDate = undefined;
-	this.setDate = function (date) {
-		if (!date)
-			this.taskDate = undefined;
-		else {
-			if (!this.taskDate)
-				this.taskDate = new Date();
-			this.taskDate.setTime(date);
-			this.div.children[1].value = this.taskDate.toISOString().split("T")[0];
-		}
-		drawTimeline();
-	}
-	//some functions which i'm sure will be useful
-	this.contains = function (item) { //does this node contain the node specified?
-		if (this == item)
-			return 2; //return 2 if I am the node
-		else {
-			for (var c of this.children) {
-				//https://stackoverflow.com/questions/29285897/what-is-the-difference-between-for-in-and-for-of-in-javascript
-				if (c.contains(item))
-					return 1; //if any of my children are/contain the element return 1.
+	recursionDepth--;
+
+	//recurisvely:
+	while (currentItem) { // while we haven't gone past the root level node
+		//draw currentItem and all its siblings
+		if (currentItem.parent) {
+			for (var x of currentItem.siblings) {
+				//draw the box
+				drawNode(x, ((x.upperindex() - currentItem.upperindex()) * (item_width + 5) - item_width / 2 + centrex), cy + recursionDepth * (item_height + 10), x.id == lastNode.id)
+				//draw the stick
+				tmp = hier_svg.line(
+						((x.upperindex() - currentItem.upperindex()) * (item_width + 5) + centrex),
+						cy + recursionDepth * (item_height + 10),
+						((x.upperindex() - currentItem.upperindex()) * (item_width + 5) + centrex),
+						cy + recursionDepth * (item_height + 10) - 5).stroke({
+						width: 1
+					});
+
 			}
+			//draw lines connecting all these siblings
+			tmp = hier_svg.line(
+					((-currentItem.upperindex()) * (item_width + 5) + centrex),
+					cy + recursionDepth * (item_height + 10) - 5,
+					((currentItem.parent.children.length - 1 - currentItem.upperindex()) * (item_width + 5) + centrex),
+					cy + recursionDepth * (item_height + 10) - 5).stroke({
+					width: 1
+				});
+
+			//move centre position for parent draw
+			centrex = (-currentItem.upperindex() + (currentItem.parent.children.length - 1) / 2) * (item_width + 5) + centrex;
+			//draw upper little connector line
+			tmp = hier_svg.line(
+					centrex,
+					cy + recursionDepth * (item_height + 10) - 5,
+					centrex,
+					cy + recursionDepth * (item_height + 10) - 10).stroke({
+					width: 1
+				});
+
+		} else {
+			drawNode(rootNode, (centrex - item_width / 2), cy + recursionDepth * (item_height + 10), lastNode == rootNode);
 		}
-		return 0;
+		//do the same thing for the currentItem's target
+		recursionDepth--;
+
+		currentItem = currentItem.parent;
 	}
 
-	this.getPath = function () {
-		if (!this.parent)
-			return this.name;
-		else
-			return this.parent.getPath() + " :: " + this.name;
-
-	}
-
-}
-var nodes = []; //store all nodes in an array so we can quickly access them
-function makeNode(parent, name, id) {
-	var p = new dataItem(parent, name, id);
-	nodes.push(p);
-	return p;
+	//insert current div into the sidebar
+	
 }
 
-function getNode(id) {
-	for (var i of nodes) {
-		if (i.id == id)
-			return i;
-	} //if none found then return nothing
-	return undefined;
+//helper function draw node
+function drawNode(node, x, y, state) {
+	//draw the box
+	var rect = hier_svg.rect(item_width, item_height).fill("#ffffff").click(selectNode).attr({
+			'x': x,
+			'y': y,
+			id: "br_" + node.id
+		}); ;
+
+	//if i am selected color me green
+	if (state)
+		rect.fill('#00ff00');
+	//if i have children then colour me pink
+	else if (node.children.length)
+		rect.fill("#00F6FF");
+	//draw name of node
+	var txt = hier_svg.text(node.name).attr('pointer-events', 'none').move(x, y);
+	var clip = hier_svg.clip().add(txt);
+
+	var clap = hier_svg.rect(item_width, item_height).move(x, y).click(selectNode).attr({
+			'x': x,
+			'y': y,
+			id: "tx_" + node.id
+		});
+	clap.clipWith(clip);
+}
+
+
+
+function HRgetNode(id){
+	if (id=="rootNode")return rootNode;
+	else return getNode(id);
 }
 
 function selectNode(e) {
 	var nid = e.path[0].id.split("_")[1];
+	var nnode=HRgetNode(nid);
 	if (anchorID != -1) {
-		var sNode = getNode(anchorID);
-		if (sNode.contains(getNode(nid))) {
+		var sNode = HRgetNode(anchorID);
+		if (sNode.contains(nnode)) {
 			$("#status").html("Cannot anchor node on its children!");
 			anchorID = -1;
 			return;
 		}
-
-		sNode.parent.children.splice(getNode(anchorID).parent.children.indexOf(getNode(anchorID)), 1);
-		sNode.parent = getNode(nid);
-		sNode.siblings = getNode(nid).children;
-		getNode(nid).children.push(sNode);
-		this.siblings = this.parent.children;
+		if (sNode.parent){
+			sNode.parent.children.splice(sNode.parent.children.indexOf(sNode), 1);
+		}
+		sNode.parent = nnode;
+		sNode.siblings = nnode.children;
+		nnode.children.push(sNode);
+		sNode.siblings = sNode.parent.children;
 		anchorID = -1;
-		$("#status").html("Select new anchor node");
+		$("#status").html("Ready");
 	}
-	drawHierarchy(getNode(nid));
-	currentNode = getNode(nid);
+	currentNode = nnode;
+	HRcurrentNode = nnode;
+	showHierarchy();
 }
 
-function finishEdit(e) {
-	var node_id = e.currentTarget.parentElement.parentElement.id.split("_")[1];
-	getNode(node_id).name = e.currentTarget.value;
-	drawHierarchy(currentNode);
-}
 
-function longdescedit(e) {
-	var node_id = e.currentTarget.parentElement.id.split("_")[1];
-	getNode(node_id).longdesc = e.currentTarget.value;
-}
-function dateEdit(e) {
-	var node_id = e.currentTarget.parentElement.id.split("_")[1];
-	var t = new Date(e.currentTarget.value);
-	getNode(node_id).setDate(t.valueOf());
-}
+
+
 var anchorID = -1;
 function reanchor(e) {
 	$("#status").html("Select new anchor node");
 	anchorID = e.currentTarget.parentElement.parentElement.id.split("_")[1];
 }
-function deleteNode(e) {
-	var div_to_delete = e.currentTarget.parentElement.parentElement;
-	var deleteID = div_to_delete.id.split("_")[1];
-	if (getNode(deleteID) == currentNode)
-		currentNode = getNode(deleteID).parent;
-	getNode(deleteID).parent.children.splice(getNode(deleteID).parent.children.indexOf(getNode(deleteID)), 1);
-	drawHierarchy(currentNode);
+
+function attachTo(){
+	if ($("#newTaskBox")[0].value){
+	var k = makeNode($("#newTaskBox")[0].value);
+	if (k.parent){
+		k.parent.children.splice(k.parent.children.indexOf(k), 1);
+	}
+	k.parent = HRcurrentNode;
+	k.siblings = HRcurrentNode.children;
+	HRcurrentNode.children.push(k);
+	k.siblings = k.parent.children;
+	anchorID = -1;
+	}
+	showHierarchy();
 }
