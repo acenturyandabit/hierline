@@ -7,7 +7,7 @@ function showHierarchy(){
 	$("#slbt").html("To Organise");
 	$("#properAdd").html("Add Child");
 	$("#properAdd").off("click");
-	$("#properAdd").on("click",attachTo);
+	$("#properAdd").on("click",addAndAttach);
 	$("#scrollContainer").css("width","75%");
 	if (!HRcurrentNode)HRcurrentNode=rootNode;
 	drawHierarchy(HRcurrentNode);
@@ -32,7 +32,7 @@ function orgboxHR(){
 			$("#blocks")[0].appendChild(i.div);
 			count++;
 		}
-		if (count>10)break;
+		if (count>50)break;
 	}
 	$(".reanchor").html("&#9875;");
 	$(".reanchor").off("click");
@@ -185,30 +185,12 @@ function selectNode(e) {
 	var nid = e.path[0].id.split("_")[1];
 	var nnode=HRgetNode(nid);
 	if (anchorID != -1) {
+		
+		
 		var sNode = HRgetNode(anchorID);
-		if (sNode.contains(nnode)) {
-			$("#status").html("Cannot anchor node on its children!");
-			anchorID = -1;
-			return;
-		}
-		if (sNode.parent){
-			sNode.parent.children.splice(sNode.parent.children.indexOf(sNode), 1);
-			if (sNode.parent.id.toString().includes("~")){//my parent had a prefix
-				var setName=sNode.parent.id.toString().split("~")[0];
-				sNode.recRemPref();
-				sNode.id=sNode.id.split("~")[1]//remove said prefix including from all children	
-				stUpdate(setName);
-			}
-		}
-		sNode.parent = nnode;
-		nnode.children.push(sNode);
-		sNode.siblings = sNode.parent.children;
-		if (nnode.id.split("~").length>1){
-			sNode.recAddPref(nnode.id.split("~")[0]);
-			stUpdate(nnode.id.split("~")[0]);
-		}
-		anchorID = -1;
+		attachTo(sNode,nnode);
 		$("#status").html("Ready");
+		anchorID = -1;
 	}
 	currentNode = nnode;
 	HRcurrentNode = nnode;
@@ -224,18 +206,37 @@ function reanchor(e) {
 	anchorID = e.currentTarget.parentElement.parentElement.id.split("_")[1];
 }
 
-function attachTo(){
+function addAndAttach(){
 	if ($("#newTaskBox")[0].value){
-	var k = makeNode($("#newTaskBox")[0].value);
-	if (k.parent){
-		k.parent.children.splice(k.parent.children.indexOf(k), 1);
+		var k = makeNode($("#newTaskBox")[0].value);
+		attachTo(k,HRcurrentNode);
+		$("#newTaskBox")[0].value="";
+	}else{
+		$("#status").html("Please enter new task name.");
 	}
-	k.parent = HRcurrentNode;
-	k.siblings = HRcurrentNode.children;
-	$("#newTaskBox")[0].value="";
-	HRcurrentNode.children.push(k);
-	k.siblings = k.parent.children;
-	anchorID = -1;
+}
+
+function attachTo(child,parent){
+	if (child.contains(parent)) {
+		$("#status").html("Cannot anchor node on its children!");
+		anchorID = -1;
+		return;
+	}
+	if (child.parent){
+		child.parent.children.splice(child.parent.children.indexOf(child), 1);
+		if (child.parent.id.toString().includes("~")){//my parent had a prefix
+			var setName=child.parent.id.toString().split("~")[0];
+			child.recRemPref();
+			child.id=child.id.split("~")[1]//remove said prefix including from all children	
+			stUpdate(setName);
+		}
+	}
+	child.parent = parent;
+	parent.children.push(child);
+	child.siblings = child.parent.children;
+	if (parent.id.split("~").length>1){
+		child.recAddPref(parent.id.split("~")[0]);
+		stUpdate(parent.id.split("~")[0]);
 	}
 	showHierarchy();
 }

@@ -17,6 +17,7 @@ var isUpdating=false;
 function upSync(){
 	//do not upsync if update is ready
 	if (!isUpdating){
+		isUpdating=true;
 		for (var i of sharedList){
 			$.ajax("https://hierline.herokuapp.com/sync?groupName="+i.name+"&key="+i.key+"&hesh="+i.hesh,{cache:false,method:'GET',success:syncOK});
 		}
@@ -24,16 +25,15 @@ function upSync(){
 }
 
 
-function syncOK(data){
-	if (data=="NO_CHANGE"){
+function syncOK(_data){
+	isUpdating=false;
+	if (_data=="NO_CHANGE"){
 		return;
 	}else{
-		data=JSON.parse(data);
-		var k = {
-			"name":data.name,"key": data.key, "hesh":data.hesh
+		var data=JSON.parse(_data);
+		for (var i of sharedList){
+			if (i.name==data.name)i.hesh=data.hesh;
 		}
-		sharedList.push(k);
-		$("#sharedStat").html("Set Added!");
 		mergin(JSON.parse(data.data));
 	}
 }
@@ -43,12 +43,12 @@ function stUpdate(setName){
 	//compile relevant nodes
 	var sendData=[];
 	for (var i of nodes){
-		if (i.id.split("~")[0]==setName){
-			sendData.push(i.toNodeBit);
+		if (i.id.toString().split("~")[0]==setName){
+			sendData.push(i.toNodeBit());
 		}
 	}
 	for (var i of sharedList){
-		if (i.name==setNsame){
+		if (i.name==setName){
 			$.ajax("https://hierline.herokuapp.com/update?groupName="+i.name+"&key="+i.key,{cache:false,success: updateOK,method:'POST',data:sendData});
 		}
 	}
@@ -66,11 +66,12 @@ function createSetOK(data){
 	}else{
 		var k=JSON.parse(data);
 		sharedList.push(k);
-		$("#sharedStat").html("Set added. Password:" + k.key);
+		$("#sharedStat").html("Set created. Password:" + k.key);
 		var p=makeNode(k.name,k.name+"~"+Date.now());
 		p.parent=HRgetNode("rootNode");
 		p.parent.children.push(p);
 		p.siblings = p.parent.children;
+		stUpdate(k.name);
 	}
 }
 

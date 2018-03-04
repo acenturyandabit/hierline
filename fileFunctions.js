@@ -26,6 +26,7 @@ function autoSave() {
 		saveList=[];
 		localStorage.removeItem("data");
 		var under_storage = window.localStorage;
+		under_storage.setItem("sharedList",JSON.stringify(sharedList));
 		for (var i of nodes)saveList.push(i.toNodeBit());
 		under_storage.setItem('data_'+Date.now(), JSON.stringify(saveList));
 		var damt=0;
@@ -46,6 +47,11 @@ function autoLoad() {
 			}
 			break;
 		}
+	}
+	try{
+		sharedList=JSON.parse(under_storage.getItem("sharedList"));
+	}catch (ex){
+		sharedList=[];
 	}
 	setInterval(autoSave, 2000);
 }
