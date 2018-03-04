@@ -157,7 +157,10 @@ function drawNode(node, x, y, state) {
 	if (state)
 		rect.fill('#00ff00');
 	//if i have children then colour me pink
-	else if (node.children.length)
+	else if (node.id.toString().includes("~")){
+		if (node.children.length)rect.fill("darkviolet");
+		else rect.fill("violet");
+	}else if (node.children.length)
 		rect.fill("#00F6FF");
 	//draw name of node
 	var txt = hier_svg.text(node.name).attr('pointer-events', 'none').move(x, y);
@@ -190,11 +193,20 @@ function selectNode(e) {
 		}
 		if (sNode.parent){
 			sNode.parent.children.splice(sNode.parent.children.indexOf(sNode), 1);
+			if (sNode.parent.id.toString().includes("~")){//my parent had a prefix
+				var setName=sNode.parent.id.toString().split("~")[0];
+				sNode.recRemPref();
+				sNode.id=sNode.id.split("~")[1]//remove said prefix including from all children	
+				stUpdate(setName);
+			}
 		}
 		sNode.parent = nnode;
-		sNode.siblings = nnode.children;
 		nnode.children.push(sNode);
 		sNode.siblings = sNode.parent.children;
+		if (nnode.id.split("~").length>1){
+			sNode.recAddPref(nnode.id.split("~")[0]);
+			stUpdate(nnode.id.split("~")[0]);
+		}
 		anchorID = -1;
 		$("#status").html("Ready");
 	}
@@ -220,9 +232,23 @@ function attachTo(){
 	}
 	k.parent = HRcurrentNode;
 	k.siblings = HRcurrentNode.children;
+	$("#newTaskBox")[0].value="";
 	HRcurrentNode.children.push(k);
 	k.siblings = k.parent.children;
 	anchorID = -1;
 	}
 	showHierarchy();
+}
+
+
+function splitsub(){
+	if (!currentNode.parent){
+		$("#status").html("Select new anchor node");
+		anchorID = currentNode.id;
+		showHierarchy();
+	}else{
+		HRcurrentNode=currentNode;
+		showHierarchy();
+	}
+	
 }

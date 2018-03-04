@@ -1,5 +1,5 @@
 var count = 0;
-
+var deletedNodes=[];
 function dataItem(name,id) { //initialiser for dataItem
 	//self properties
 	if (!id)
@@ -26,12 +26,13 @@ function dataItem(name,id) { //initialiser for dataItem
 	//record the parent element and all the children for the node; just cos
 	this.parent = undefined; //reference to parent
 	this.children = []; //define an empty set. this will be filled with references to children.
-	if (this.parent) {
-		this.siblings = this.parent.children; //orphans dont have siblings
-	}
 	this.upperindex = function () { // upperindex might change so this is a function
 		index = this.parent.children.findIndex(x => x.id == this.id);
 		return index;
+	}
+	this.setName = function (name){
+		this.name=name;
+		this.div.children[0].children[0].value=name;
 	}
 	this.setlongdesc = function (ld) {
 		this.longdesc = ld;
@@ -85,7 +86,30 @@ function dataItem(name,id) { //initialiser for dataItem
 			return this.parent.getPath() + " :: " + this.name;
 
 	}
-
+	this.tags=[];
+	this.toNodeBit =function(){
+		var underDate;
+		var underCD;
+		if (this.creationDate)underCD=this.creationDate.valueOf();
+		if (this.taskDate)underDate=this.taskDate.valueOf();
+		var node_bit = {
+			id: this.id,
+			name: this.name,
+			longdesc: this.longdesc,
+			date: underDate,
+			cd: underCD,
+			parent: this.parent ? this.parent.id : undefined // ternary operator: bascially a mini if statement
+		}
+		return node_bit;
+	}
+	this.recRemPref=function(){
+		this.id=this.id.split("~")[1];
+		for (var i in this.children)i.recRemPref();
+	}
+	this.recAddPref=function(pref){
+		this.id=pref+"~"+this.id;
+		for (var i in this.children)i.recRemPref(pref);
+	}
 }
 var nodes = []; //store all nodes in an array so we can quickly access them
 $(document).ready(()=>{var hier_zero=new dataItem("Tasks",0);});
@@ -117,6 +141,7 @@ function getNode(id) {
 }
 
 function taskDone(){
+	deletedNodes.push(currentNode);
 	nodes.splice(nodes.indexOf(currentNode),1);
 	drawCurrentScreen();
 }
@@ -133,6 +158,7 @@ function deleteNode(e) {
 	if (gnd==currentNode)rcn=true;
 	nodes.splice(nodes.indexOf(gnd),1);
 	if (rcn)currentNode=nodes[0];
+	deletedNodes.push(gnd);
 	drawCurrentScreen();
 }
 

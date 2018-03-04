@@ -50,6 +50,7 @@ function initialise() {
 	$("#loadFile").on("change", loadFile);
 	$("#newTaskBox").on("keydown",enterCheck);
 	$("html").on("keydown", escapeCheck);
+	$("html").on("click", hideMenu);
 	$("#domReanchor").on("click",domReanchor);
 	//draw a node (testing)
 	setInterval(drawTimeline, 10000);
@@ -87,11 +88,18 @@ function escapeCheck(e) {
 		anchorID = -1;
 		$("#floaterTLbox").hide();
 		$("html").focus();
+		$("#floatingMenu").hide();
 	}
 	if (e.key == "s" && e.ctrlKey == true) {
 		autoSave();
 		$("#status").html("Saved locally. Autosave is on.");
 		return false;
+	}
+}
+
+function hideMenu(e){
+	if (!e.originalEvent.target.classList.contains("menubits")){
+		$('#floatingMenu').hide();
 	}
 }
 
@@ -102,4 +110,37 @@ function enterCheck(e){
 	
 }
 
+function toggleMenu(){
+	$('#floatingMenu').toggle();
+}
 
+function showBin(){
+	$('#floatingMenu').hide();
+	//populate bin
+	$(".deletedItem").remove();
+	for (var i of deletedNodes){
+		var itemName=document.createElement("p");
+		itemName.innerHTML=i.name;
+		itemName.classList.add("deletedItem");
+		itemName.id="dlit_"+i.id;
+		$("#recycleBin")[0].appendChild(itemName);
+	}
+	$(".deletedItem").on("click", restoreItem);
+	$('#recycleBin').show();
+}
+
+function restoreItem(e){
+	for (var i of deletedNodes){
+		if (i.id==e.currentTarget.id.split("_")[1]){
+			nodes.push(i);
+			deletedNodes.splice(deletedNodes.indexOf(i),1);
+			break;
+		}
+	}
+	showBin();	
+}
+
+function hideBin(){
+	$('#recycleBin').hide();
+	
+}

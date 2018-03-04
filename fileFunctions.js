@@ -1,35 +1,17 @@
 var saveList;
-function generateSave(node) {
-	/*
-	add myself then add my children
-	 */
-	 var underDate;
-	 var underCD;
-	 if (node.creationDate)underCD=node.creationDate.valueOf();
-	 if (node.taskDate)underDate=node.taskDate.valueOf();
-	 
-	var node_bit = {
-		id: node.id,
-		name: node.name,
-		longdesc: node.longdesc,
-		date: underDate,
-		cd: underCD,
-		parent: node.parent ? node.parent.id : undefined // ternary operator: bascially a mini if statement
-	}
-	saveList.push(node_bit);	
-}
 
 const MIME_TYPE = 'application/json';
 function saveFile() {
 	saveList=[];
 	$("#top_bar span a").remove();
-	for (var i of nodes)generateSave(i);
+	for (var i of nodes)saveList.push(i.toNodeBit());
 	var bb = new Blob([JSON.stringify(saveList)], {
 			type: MIME_TYPE
 		});
 
 	var a = document.createElement('a');
-	a.download = nodes[0].name + ".heir";
+	var d = new Date();
+	a.download = "Tasklist " + d.toDateString() + ".heir";
 	a.href = window.URL.createObjectURL(bb);
 	a.textContent = '.';
 
@@ -44,7 +26,7 @@ function autoSave() {
 		saveList=[];
 		localStorage.removeItem("data");
 		var under_storage = window.localStorage;
-		for (var i of nodes)generateSave(i);
+		for (var i of nodes)saveList.push(i.toNodeBit());
 		under_storage.setItem('data_'+Date.now(), JSON.stringify(saveList));
 		var damt=0;
 		for (var i in under_storage)if (i.includes("data_"))damt++;

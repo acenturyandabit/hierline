@@ -4,25 +4,26 @@
 	<link rel="stylesheet" href="index.css"></link>
 	<script src="jquery.min.js"></script> 
 	<script src="svg.min.js"></script> 	
-	<title>HeirLine</title>
+	<title>HierLine</title>
 	<script src="page.js"></script> 
 	<script src="fileFunctions.js"></script> 
 	<script src="hier.js"></script>
 	<script src="line.js"></script>
 	<script src="domode.js"></script>
 	<script src="node.js"></script>
+	<script src="sharedTasks.js"></script>
 </head>
 <body>
 	<div id="top_bar">
 		<div id="tb_LHS">
-			<h1>Heirline</h1>
+			<h1>Hierline</h1>
 			<p>Inspire yourself.</p>
 		</div>
 		<div id="tb_RHS">
 			<img src="play_ico.png" onclick="showDoMode()"></img>
 			<img src="hier_ico.png" onclick="showHierarchy()"></img>
 			<img src="time_ico.png" onclick="showTimeline()"></img>
-			<img src="menu_ico.png"></img>
+			<img src="menu_ico.png" onclick="toggleMenu()" class="menubits"></img>
 		</div>
 	</div>
 	
@@ -34,7 +35,7 @@
 			<p>Tags:<span contenteditable class="ce">Enter Tags...</span></p>
 			<textarea id="dm_tdesc"></textarea>
 			<p>Time since task started: </p>
-			<button onclick="taskDone()">DONE!</button><button>Split into subtasks</button><button id="domReanchor">Reschedule</button>
+			<button onclick="taskDone()">DONE!</button><button onclick="splitsub()">Split into subtasks</button><button id="domReanchor">Reschedule</button>
 		</div>
 		<div id="allDone">
 			<h2>All done!</h2>
@@ -83,6 +84,38 @@
 	<div id="floaterTLbox">
 		<input type="text" id="floaterTB"></input>
 		<button onClick="floaterTLboxDone()">Done</button>
+	</div>
+	<div id="recycleBin">
+		<p class="boxClose" onclick="hideBin()">X</p>
+		<h2>Deleted tasks</h2>
+		<p>Click an item to restore it.</p>
+	</div>
+	<div id="sharedTasks">
+		<p class="boxClose" onclick="hideShared()">X</p>
+		<h2>Shared Tasks</h2>
+		<div>
+			<div id="st_lhs">
+				<p>Add a shared taskset</p>
+				<input id="st_addname" type="text" placeholder="Name"></input>
+				<input id="st_addkey" type="text" placeholder="Password"></input>
+				<button onclick="tryAddSet()">Add</button>
+			</div>
+			<div id="st_rhs">
+				<p>Or create a shared taskset...</p>
+				<input id="st_crename" type="text" placeholder="Name"></input>
+				<button onclick="createSet()">Create</button>
+			</div>	
+		</div>
+		<p id="sharedStat">	</p>
+		<div id="sharedbox">
+			<h3>Shared sets</h3>
+		</div>
+	</div>
+	<div id="floatingMenu">
+		
+		<p onclick="showBin()" class="menubits">Deleted tasks</p>
+		<p onclick="saveFile()" class="menubits">Save to file</p>
+		<p onclick="sharedTasks()" class="menubits">Shared tasksets</p>
 	</div>
 	
 	<!-- this task template div is invisible but we want to keep it so we can copy it when making new tasks -->

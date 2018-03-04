@@ -30,6 +30,7 @@ function tlInit(){
 	tl_item_width=$("body").width()*0.1;
 	tl_item_height=$("body").height()*0.05;
 	TLsvg.click(findTime);
+	$("#floaterTB").on("keypress",flkp);
 }
 
 var TLsvg;
@@ -64,7 +65,6 @@ function orgBoxTL(){
 	$(".reanchor").html("&#9201;");
 	$(".reanchor").off("click");
 	$(".reanchor").on("click",TLreanchor);
-	$("#floaterTB").on("keypress",flkp);
 }
 
 function resetDate(){
@@ -188,6 +188,7 @@ function findTime(e){
 				//var ny=Math.round((floaterTime.valueOf()-chour.valueOf())/(30*60*1000))*tl_item_height-tl_item_height;
 				$("#floaterTLbox").css("top",e.clientY);
 				$("#floaterTLbox").css("left",e.clientX);
+				$("#floaterTB")[0].value="";
 				$("#floaterTLbox").show();
 				$("#floaterTB").focus();
 			}
@@ -211,10 +212,21 @@ function floaterTLboxDone(){
 	showTimeline();
 }
 	
-	
+var NTC=false;
 function TLreanchor(e) {
 	$("#status").html("Pick timeslot");
+	if (anchorID==e.currentTarget.parentElement.parentElement.id.split("_")[1]){
+		if (NTC){
+			getNode(anchorID).setDate(Date.now()+90*365*24*60*60*1000);
+			showTimeline();
+		}else{
+			NTC=true;
+			$("#status").html("Click again to make task incidental");
+		}
+		return;
+	}
 	anchorID = e.currentTarget.parentElement.parentElement.id.split("_")[1];
+	NTC=false;
 }
 
 function TLSelectNode(e){

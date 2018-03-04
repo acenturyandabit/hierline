@@ -204,3 +204,83 @@ textarea{/* that multiline text box in each block*/
 	display:none;
 	position:absolute;
 }
+
+
+#floatingMenu{
+	display:none;
+	position:absolute;
+	right:0;
+	top:9vh;
+}
+
+#floatingMenu p{
+	margin:0;
+	height:5vh;
+	width:10vw;
+	background-color:white;
+	border-bottom-style:solid;
+	user-select:none;
+}
+
+#recycleBin{
+	position:absolute;
+	margin:auto;
+	width:30vw;
+	height:80vh;
+	display:none;
+	top:10vh;
+	left:35vw;
+	background-color:white;
+}
+
+.boxClose{
+	user-select:none;
+	text-align: center;
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: auto;
+    width: 30px;
+    height: 30px;
+    border: solid;
+}
+
+.deletedItem{
+	border: solid;
+	user-select:none;
+}
+
+#sharedTasks{
+	position:absolute;
+	margin:auto;
+	width:30vw;
+	height:80vh;
+	display:none;
+	top:10vh;
+	left:35vw;
+	background-color:white;
+	flex-direction:column;
+}
+
+#st_lhs{
+	width:50%;
+}
+
+#st_rhs{
+	position:absolute;
+	top:0;
+	right:0;
+	width:50%;
+}
+#st_rhs>p,#st_lhs>p{
+	margin:0;
+}
+
+#sharedTasks>div{
+	position:relative;
+}
+#sharedbox{
+	width:100%;
+	display:flex;
+	
+}
