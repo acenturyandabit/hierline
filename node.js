@@ -168,9 +168,12 @@ function removeNode(node){
 		node.parent.children.splice(node.parent.children.indexOf(node), 1);
 	}
 	var rcn=false;
+	var rhcn=false;
 	if (node==currentNode)rcn=true;
+	if (node==HRcurrentNode)rhcn=true;
 	nodes.splice(nodes.indexOf(node),1);
 	if (rcn)currentNode=nodes[0];
+	if (rhcn)HRcurrentNode=nodes[0];
 	deletedNodes.push(node);
 	drawCurrentScreen();
 
