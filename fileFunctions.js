@@ -87,7 +87,7 @@ function loadFromString(loadscript){
 		nodes = [];
 		for (var i of loadedData) {
 			var p = makeNode(i.name, i.id);
-			p.setlongdesc(i.longdesc);
+			p.setlongdesc(i.longdesc,true);
 			if (i.date) p.setDate(i.date);
 			if (i.cd) p.creationDate=new Date().setTime(i.cd);
 		}

@@ -33,10 +33,16 @@ function dataItem(name,id) { //initialiser for dataItem
 	this.setName = function (name){
 		this.name=name;
 		this.div.children[0].children[0].value=name;
+		if (this.id.toString().split("~").length>1){
+			stUpdate(this.id.split("~")[0]);
+		}
 	}
-	this.setlongdesc = function (ld) {
+	this.setlongdesc = function (ld,auto) {
 		this.longdesc = ld;
 		this.div.children[2].value = this.longdesc;
+		if ((!auto) && this.id.toString().split("~").length>1){
+			stUpdate(this.id.split("~")[0]);
+		}
 	}
 	//timeline
 	this.taskDate = undefined;
@@ -48,6 +54,9 @@ function dataItem(name,id) { //initialiser for dataItem
 			this.taskDate = new Date();
 			this.taskDate.setTime(date);
 			this.div.children[1].value = this.taskDate.toISOString().split("T")[0];
+		}
+		if (this.id.toString().split("~").length>1){
+			stUpdate(this.id.split("~")[0]);
 		}
 	}
 	this.getSortableDate=function(){
@@ -169,12 +178,12 @@ function removeNode(node){
 
 function finishEdit(e) {
 	var node_id = e.currentTarget.parentElement.parentElement.id.split("_")[1];
-	getNode(node_id).name = e.currentTarget.value;
+	getNode(node_id).setName(e.currentTarget.value);
 }
 
 function longdescedit(e) {
 	var node_id = e.currentTarget.parentElement.id.split("_")[1];
-	getNode(node_id).longdesc = e.currentTarget.value;
+	getNode(node_id).setlongdesc(e.currentTarget.value);
 }
 function dateEdit(e) {
 	var node_id = e.currentTarget.parentElement.id.split("_")[1];
