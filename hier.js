@@ -216,7 +216,7 @@ function addAndAttach(){
 	}
 }
 
-function attachTo(child,parent){
+function attachTo(child,parent,auto){
 	if (child.contains(parent)) {
 		$("#status").html("Cannot anchor node on its children!");
 		anchorID = -1;
@@ -228,16 +228,18 @@ function attachTo(child,parent){
 			var setName=child.parent.id.toString().split("~")[0];
 			child.recRemPref();
 			child.id=child.id.split("~")[1]//remove said prefix including from all children	
-			stUpdate(setName);
+			if (!auto)stUpdate(setName);
 		}
 	}
-	child.parent = parent;
-	parent.children.push(child);
-	child.siblings = child.parent.children;
-	if (parent.id.toString().split("~").length>1){
-		child.recAddPref(parent.id.split("~")[0]);
-		stUpdate(parent.id.split("~")[0]);
-	}
+	if (parent){
+		child.parent = parent;
+		parent.children.push(child);
+		child.siblings = child.parent.children;
+		if (parent.id.toString().split("~").length>1){
+			child.recAddPref(parent.id.split("~")[0]);
+			stUpdate(parent.id.split("~")[0]);
+		}
+	}	
 	showHierarchy();
 }
 

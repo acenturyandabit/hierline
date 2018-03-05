@@ -105,12 +105,14 @@ function addSetOK(data){
 	}
 }
 
-function mergin(loadedData){
+function mergin(_loadedData){
 	//an array of nodes
 	//for each node,find corresponding ID
-	if (loadedData) {
-		for (var _i in loadedData) {
-			var i=JSON.parse(_i);
+	if (_loadedData) {
+		for (var _i in _loadedData) {
+			loadedData=JSON.parse(_i);
+		}
+		for (var i of loadedData) {
 			var p = getNode(i.id);
 			if (!p)p = makeNode(i.name,i.id);
 			p.setName(i.name);
@@ -119,14 +121,9 @@ function mergin(loadedData){
 			if (i.cd) p.creationDate=new Date().setTime(i.cd);
 		}
 		//second pass for parents
-		for (var _i in loadedData) {
-			var i=JSON.parse(_i);
+		for (var i of loadedData) {
 			var p = getNode(i.id);
-			if (i.parent){
-				p.parent=HRgetNode(i.parent);
-				p.parent.children.push(p);
-				p.siblings = p.parent.children;
-			}
+			attachTo(p,HRgetNode(i.parent),true);
 		}
 	}
 }
