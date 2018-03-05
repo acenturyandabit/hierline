@@ -48,6 +48,7 @@ function autoLoad() {
 			break;
 		}
 	}
+	sharedList=[];
 	try{
 		sharedList=JSON.parse(under_storage.getItem("sharedList"));
 	}catch (ex){
