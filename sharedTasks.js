@@ -40,7 +40,7 @@ function syncOK(_data){
 			for (var i of sharedList){
 				if (i.name==data.name)i.hesh=data.hesh;
 			}
-			mergin(JSON.parse(data.data));
+			mergin(JSON.parse(data.data),data.name);
 		}else{
 			$("#status").html ("Sync error.");
 		}
@@ -101,11 +101,17 @@ function addSetOK(data){
 		}
 		sharedList.push(k);
 		$("#sharedStat").html("Set Added!");
-		mergin(JSON.parse(data.data));
+		mergin(JSON.parse(data.data),data.name.trim());
 	}
 }
 
-function mergin(_loadedData){
+function mergin(_loadedData,setName){
+	//delete all the previous ones mwahahah
+	for (var i of nodes){
+		if (i.id.toString.split("~")[0]==setName){
+			removeNode(i);
+		}
+	}
 	//an array of nodes
 	//for each node,find corresponding ID
 	if (_loadedData) {

@@ -150,16 +150,21 @@ function deleteNode(e) {
 	var div_to_delete = e.currentTarget.parentElement.parentElement;
 	var deleteID = div_to_delete.id.split("_")[1];
 	var gnd = getNode(deleteID);
-	if (gnd.parent){
-		if (gnd==currentNode && currentScreen==1)currentNode=gnd.parent;
-		getNode(deleteID).parent.children.splice(getNode(deleteID).parent.children.indexOf(getNode(deleteID)), 1);
+	removeNode(gnd);
+}
+
+function removeNode(node){
+	if (node.parent){
+		if (node==currentNode && currentScreen==1)currentNode=node.parent;
+		node.parent.children.splice(node.parent.children.indexOf(node), 1);
 	}
 	var rcn=false;
-	if (gnd==currentNode)rcn=true;
-	nodes.splice(nodes.indexOf(gnd),1);
+	if (node==currentNode)rcn=true;
+	nodes.splice(nodes.indexOf(node),1);
 	if (rcn)currentNode=nodes[0];
-	deletedNodes.push(gnd);
+	deletedNodes.push(node);
 	drawCurrentScreen();
+
 }
 
 function finishEdit(e) {
