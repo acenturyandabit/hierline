@@ -237,7 +237,7 @@ function attachTo(child,parent,auto){
 		child.siblings = child.parent.children;
 		if (parent.id.toString().split("~").length>1){
 			child.recAddPref(parent.id.split("~")[0]);
-			stUpdate(parent.id.split("~")[0]);
+			if (!auto)stUpdate(parent.id.split("~")[0]);
 		}
 	}	
 	showHierarchy();

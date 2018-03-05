@@ -108,7 +108,7 @@ function dataItem(name,id) { //initialiser for dataItem
 	}
 	this.recAddPref=function(pref){
 		this.id=pref+"~"+this.id;
-		for (var i in this.children)i.recRemPref(pref);
+		for (var i in this.children)i.recAddPref(pref);
 	}
 }
 var nodes = []; //store all nodes in an array so we can quickly access them

@@ -110,7 +110,7 @@ function mergin(_loadedData){
 	//for each node,find corresponding ID
 	if (_loadedData) {
 		for (var _i in _loadedData) {
-			loadedData=JSON.parse(_i);
+			loadedData=JSON.parse("["+_i+"]");
 		}
 		for (var i of loadedData) {
 			var p = getNode(i.id);
