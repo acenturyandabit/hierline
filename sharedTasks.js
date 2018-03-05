@@ -108,7 +108,7 @@ function addSetOK(data){
 function mergin(_loadedData,setName){
 	//delete all the previous ones mwahahah
 	for (var i of nodes){
-		if (i.id.toString.split("~")[0]==setName){
+		if (i.id.toString().split("~")[0]==setName){
 			removeNode(i);
 		}
 	}
