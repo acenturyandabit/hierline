@@ -48,6 +48,8 @@ function syncOK(_data){
 	setTimeout(upSync,1000);
 }
 
+
+
 function stUpdate(setName){
 	isUpdating=true;
 	//compile relevant nodes
@@ -95,7 +97,7 @@ function addSetOK(data){
 	}else{
 		data=JSON.parse(data);
 		var k = {
-			"name":data.name,"key": data.key, "hesh":data.hesh
+			"name":data.name.trim(),"key": data.key.trim(), "hesh":data.hesh
 		}
 		sharedList.push(k);
 		$("#sharedStat").html("Set Added!");
