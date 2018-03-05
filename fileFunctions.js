@@ -54,6 +54,7 @@ function autoLoad() {
 	}catch (ex){
 		sharedList=[];
 	}
+	if (!sharedList)sharedList=[];
 	setInterval(autoSave, 2000);
 }
 
