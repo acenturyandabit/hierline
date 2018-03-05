@@ -121,8 +121,8 @@ function mergin(_loadedData,setName){
 		for (var i of loadedData) {
 			var p = getNode(i.id);
 			if (!p)p = makeNode(i.name,i.id);
-			p.setName(i.name);
-			p.setlongdesc(i.longdesc);
+			p.setName(i.name,true);
+			p.setlongdesc(i.longdesc,true);
 			if (i.date) p.setDate(i.date);
 			if (i.cd) p.creationDate=new Date().setTime(i.cd);
 		}

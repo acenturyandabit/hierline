@@ -30,10 +30,10 @@ function dataItem(name,id) { //initialiser for dataItem
 		index = this.parent.children.findIndex(x => x.id == this.id);
 		return index;
 	}
-	this.setName = function (name){
+	this.setName = function (name,auto){
 		this.name=name;
 		this.div.children[0].children[0].value=name;
-		if (this.id.toString().split("~").length>1){
+		if ((!auto) && this.id.toString().split("~").length>1){
 			stUpdate(this.id.split("~")[0]);
 		}
 	}
