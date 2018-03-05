@@ -111,6 +111,7 @@ function drawTimeline(){
 				}
 			}
 			chour.setDate(new Date().getDate());
+			chour.setMonth(new Date().getMonth());
 			//little now arrow
 			var nx=Math.floor((Date.now()-cday.valueOf())/(24*60*60*1000))*tl_item_width+tl_item_width;
 			var ny=(Date.now()-chour.valueOf())/(30*60*1000)*tl_item_height-tl_item_height;

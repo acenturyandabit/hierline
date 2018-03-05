@@ -234,7 +234,7 @@ function attachTo(child,parent){
 	child.parent = parent;
 	parent.children.push(child);
 	child.siblings = child.parent.children;
-	if (parent.id.split("~").length>1){
+	if (parent.id.toString().split("~").length>1){
 		child.recAddPref(parent.id.split("~")[0]);
 		stUpdate(parent.id.split("~")[0]);
 	}

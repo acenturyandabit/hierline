@@ -10,7 +10,7 @@ function hideShared(){
 	$('#sharedTasks').hide();
 }
 
-$(document).ready(()=>{setInterval(upSync,2000)});
+$(document).ready(()=>{setInterval(upSync,30000)});
 
 var isUpdating=false;
 //make them sync all at the same time?
@@ -28,14 +28,24 @@ function upSync(){
 function syncOK(_data){
 	isUpdating=false;
 	if (_data=="NO_CHANGE"){
+		setTimeout(upSync,10000);
 		return;
+		
+	}else if (_data == "undefined"){
+		$("#status").html ("Sync error.");
 	}else{
 		var data=JSON.parse(_data);
-		for (var i of sharedList){
-			if (i.name==data.name)i.hesh=data.hesh;
+		data.name=data.name.trim();
+		if (data.data){
+			for (var i of sharedList){
+				if (i.name==data.name)i.hesh=data.hesh;
+			}
+			mergin(JSON.parse(data.data));
+		}else{
+			$("#status").html ("Sync error.");
 		}
-		mergin(JSON.parse(data.data));
 	}
+	setTimeout(upSync,1000);
 }
 
 function stUpdate(setName){
@@ -49,7 +59,7 @@ function stUpdate(setName){
 	}
 	for (var i of sharedList){
 		if (i.name==setName){
-			$.ajax("https://hierline.herokuapp.com/update?groupName="+i.name+"&key="+i.key,{cache:false,success: updateOK,method:'POST',data:sendData});
+			$.ajax("https://hierline.herokuapp.com/update?groupName="+i.name+"&key="+i.key,{cache:false,success: updateOK,method:'POST',data:JSON.stringify(sendData)});
 		}
 	}
 }
@@ -97,7 +107,8 @@ function mergin(loadedData){
 	//an array of nodes
 	//for each node,find corresponding ID
 	if (loadedData) {
-		for (var i of loadedData) {
+		for (var _i in loadedData) {
+			var i=JSON.parse(_i);
 			var p = getNode(i.id);
 			if (!p)p = makeNode(i.name,i.id);
 			p.setName(i.name);
@@ -106,7 +117,8 @@ function mergin(loadedData){
 			if (i.cd) p.creationDate=new Date().setTime(i.cd);
 		}
 		//second pass for parents
-		for (var i of loadedData) {
+		for (var _i in loadedData) {
+			var i=JSON.parse(_i);
 			var p = getNode(i.id);
 			if (i.parent){
 				p.parent=HRgetNode(i.parent);
