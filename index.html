@@ -1,8 +1,15 @@
 <!DOCTYPE HTML>
 
 <head>
+	<script src="https://www.gstatic.com/firebasejs/4.11.0/firebase.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/4.10.1/firebase-app.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/4.10.1/firebase-auth.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/4.10.1/firebase-database.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/4.10.1/firebase-firestore.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/4.10.1/firebase-messaging.js"></script>
 	<link rel="stylesheet" href="index.css"></link>
 	<script src="jquery.min.js"></script> 
+	<script src="phono_rdr.js"></script>
 	<script src="svg.min.js"></script> 	
 	<title>HierLine</title>
 	<script src="page.js"></script> 
@@ -50,7 +57,7 @@
 	</div>
 	
 	<div id="timeline" class="specialScroll mb_ex">
-		<p>View:<button>Day</button><button>Week</button><button>Month</button></p>
+		<p>View:<button>Week</button><button onClick="drawMonth()">Month</button>    <button onClick="seeNow()">Show now</button></p>
 	</div>
 	
 	
@@ -121,7 +128,7 @@
 	<!-- this task template div is invisible but we want to keep it so we can copy it when making new tasks -->
 	<div id="item_template" class="item_block">
 		<h2 class="taskName"><input type="text" value="Task"></input><a class="trashcan right_align">&#128465;</a><a class="reanchor right_align">&#9875;</a></h2>
-		<input type="date"></input>
+		<input type="text" placeholder="Tags"></input>
 		<textarea></textarea>
 	</div>
 	

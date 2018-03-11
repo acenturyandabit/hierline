@@ -11,6 +11,10 @@ html, body{
 	background-color:#B7FFFF;
 }
 
+p{
+	margin:0;
+}
+
 #tb_LHS{
 	position:absolute;
 	width:50%;	
@@ -37,7 +41,7 @@ html, body{
 }
 
 #statusBar{
-	background-color:blue;
+	background-color:#357f7f;
 	position:absolute;
 	width:100%;
 	bottom:0;
@@ -57,7 +61,7 @@ html, body{
 	width:100%;
 }
 #top_bar{
-	background-color:#00F6FF;
+	background-color:#6affff;
 	position:relative;
 	height:10%;
 }
@@ -131,9 +135,7 @@ h1{
 
 #blocks{
 	display:flex;
-	/*
-		https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Flexible_Box_Layout/Basic_Concepts_of_Flexbox - what i'm trying to achieve - learning yay
-	*/
+	flex: 1 1 auto;
 	height: calc(100% - 33px);
 	overflow-x:auto;
 	overflow-y:hidden;

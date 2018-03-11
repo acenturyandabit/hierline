@@ -13,6 +13,7 @@ function showHierarchy(){
 	drawHierarchy(HRcurrentNode);
 	currentScreen=1;
 	orgboxHR();
+	verifyAll();
 }
 
 var rootNode;
@@ -47,7 +48,6 @@ function drawHierarchy(lastNode) {
 	//drawTimeline();
 	//change h1 to the path of the node
 	//$("h1")[0].innerHTML = "Heirline - " + lastNode.getPath();
-
 	//clear everything
 	hier_svg.clear();
 	//remove them from the document but don't destroy them
@@ -55,7 +55,7 @@ function drawHierarchy(lastNode) {
 	var tmp;
 	var currentItem = lastNode;
 	var centrex = hier_svg.width() / 2;
-	var cy=hier_svg.height()/2;
+	var cy=hier_svg.height()*0.9;
 	//draw direct children for navigation
 	for (var x of currentItem.children) {
 		//draw the box
@@ -194,7 +194,10 @@ function selectNode(e) {
 	}
 	currentNode = nnode;
 	HRcurrentNode = nnode;
+	$("#properAdd").off("click");
+	$("#properAdd").on("click",addAndAttach);
 	showHierarchy();
+	e.stopPropagation();
 }
 
 
@@ -239,10 +242,11 @@ function attachTo(child,parent,auto){
 			child.recAddPref(parent.id.split("~")[0]);
 			if (!auto)stUpdate(parent.id.split("~")[0]);
 		}
-	}	
+	}
+	changesMade=true;
+	child.updateTag();
 	showHierarchy();
 }
-
 
 function splitsub(){
 	if (!currentNode.parent){

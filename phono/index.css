@@ -1,0 +1,45 @@
+@font-face {
+font-family: "oxcross";
+src: url("../oxcross.otf");
+}
+body{
+	margin:0px;
+	background-color:#B7FFFF;
+}
+h1{
+	font-family:oxcross;
+	font-size: 20vw;
+	text-align:center;
+	background-color:#6affff;
+	margin:0;
+}
+h2{
+	font-family:oxcross;
+	font-size: 7vw;
+	margin:0;
+}
+p,input,button{
+	font-size: 5vw;
+}
+p{
+	margin:0;
+}
+
+#loginStatus>div{
+	position:absolute;
+	top:0;
+	right:0;
+}
+input,button{
+	width:100%;
+	margin:1vh 0;
+}
+#loginStatus>div>img{
+	height:13vw;
+}
+
+#loginStatus{
+	background-color:lightgreen;
+	position:relative;
+	width:100%;
+}

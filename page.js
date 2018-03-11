@@ -1,12 +1,4 @@
 
-/*
-jquery 101:
-$("same things you use in css to select elements")
-this returns an array holding all elements which would be selected by the provided string.
-To access an element directly to modify its properties, we would have to get it by its index e.g. $("hierarchy_div")[0].width=100;
-you can also perform some jquery specific functions e.g. add():
-$(".some_class").add("click", function) means every time an element with some_class is clicked, function() will run.
- */
 
 //some basic functions
 
@@ -20,12 +12,23 @@ var starter_quotes=[
 	"What do you call a prince's private jet?"
 ];
 var currentScreen;
+
 /*
 0: domode
 1: hierarchy
 2: timeline
 */
-function drawCurrentScreen(){
+
+var config = {
+apiKey: "AIzaSyDKPYbPTX6cVCDrv5vXNFKAjfO_gpPFgt8",
+authDomain: "heirline-3fb1c.firebaseapp.com",
+databaseURL: "https://heirline-3fb1c.firebaseio.com",
+projectId: "heirline-3fb1c",
+storageBucket: "heirline-3fb1c.appspot.com",
+messagingSenderId: "1080694993278"
+};
+
+function showCurrentScreen(){
 	switch(currentScreen){
 		case 0:
 			showDoMode();
@@ -39,12 +42,28 @@ function drawCurrentScreen(){
 	}
 }
 
+function drawCurrentScreen(){
+	switch(currentScreen){
+		case 0:
+			break;
+		case 1:
+			drawHierarchy();
+			break;
+		case 2: 
+			drawTimeline();
+			break;
+	}
+}
+
 
 $(document).ready(initialise); //register initialise() to be run when document loads - safer than just running it when this script is loaded because then we're guarunteed some elements will be loaded.
 var MOUSE_OVER = false;
 function initialise() {
 	//get a random quote
 	$("#top_bar>div>p").html(starter_quotes[Math.round(Math.random()*starter_quotes.length)])
+	//initialise firebase
+	
+	firebase.initializeApp(config);
 	rootNode=new dataItem("Tasks","rootNode");
 	//generate some sample nodes
 	$("#loadFile").on("change", loadFile);
@@ -52,8 +71,8 @@ function initialise() {
 	$("html").on("keydown", escapeCheck);
 	$("html").on("click", hideMenu);
 	$("#domReanchor").on("click",domReanchor);
-	//draw a node (testing)
 	setInterval(drawTimeline, 10000);
+	setInterval(remindSave, 1000000);
 	autoLoad();
 	//drawHierarchy(nodes[0]);
 	$('body').bind('mousewheel', function (e) {
@@ -82,15 +101,27 @@ function initialise() {
 	showDoMode();
 }
 
+function remindSave(){
+$("#status").html("Haven't saved in a while. Save now? (Menu > Save to file)");
+}
+
+function resetStatus(){
+	$("#status").html("Ready");
+	anchorID = -1;
+	$("#floaterTLbox").hide();
+	$("html").focus();
+	$("#floatingMenu").hide();
+}
+
 function escapeCheck(e) {
 	if (e.key == "Escape") {
-		$("#status").html("Ready");
-		anchorID = -1;
-		$("#floaterTLbox").hide();
-		$("html").focus();
-		$("#floatingMenu").hide();
+		resetStatus();
 	}
-	if (e.key == "s" && e.ctrlKey == true) {
+	if (e.key=="Delete" && e.ctrlKey){
+		if (currentScreen==1)removeNode(HRcurrentNode);
+		else removeNode(currentNode);
+	}
+	if (e.key == "s" && e.ctrlKey) {
 		autoSave();
 		$("#status").html("Saved locally. Autosave is on.");
 		return false;

@@ -10,6 +10,7 @@ function showDoMode(){
 	$("#scrollContainer").css("width","100%");
 	currentScreen=0;
 	drawDoModeScreen();	
+	verifyAll();
 }
 
 var currentNode;
@@ -70,10 +71,10 @@ function validate(e){
 
 
 function dmCTname(){
-	currentNode.name=$("#dm_tname")[0].value;
+	currentNode.setName($("#dm_tname")[0].value);
 }
 function dmCTdesc(){
-	currentNode.longdesc=$("#dm_tdesc")[0].value;
+	currentNode.setlongdesc($("#dm_tdesc")[0].value);
 }
 
 function newDoNow(){

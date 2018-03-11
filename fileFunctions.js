@@ -20,9 +20,9 @@ function saveFile() {
 	a.click();
 };
 
-var changesMade;
+var changesMade=false;
 function autoSave() {
-	if (nodes.length){
+	if (nodes.length && changesMade){
 		saveList=[];
 		localStorage.removeItem("data");
 		var under_storage = window.localStorage;
@@ -33,21 +33,36 @@ function autoSave() {
 		for (var i in under_storage)if (i.includes("data_"))damt++;
 		for (var i in under_storage)if (damt>5){under_storage.removeItem(i);damt--;}
 	}
+	changesMade=false;
+}
+
+
+function loadSort(a,b){
+	return b.time-a.time;
 }
 
 function autoLoad() {
 	var under_storage = window.localStorage;
+	//vague attempt get latest one
+	var setsarray=[];
 	for (var i in under_storage){
 		if (i.includes("data")){
-			var loadedData = under_storage.getItem(i);
-			try{
-				loadFromString(loadedData);
-			}catch (err){
-				continue;
-			}
-			break;
+			setsarray.push({"time":i.split("_")[1],"data":under_storage.getItem(i)});
+			
+			
 		}
 	}
+	setsarray.sort(loadSort);
+	for (var i of setsarray){
+		var loadedData = i.data;
+		try{
+			loadFromString(loadedData);
+		}catch (err){
+			continue;
+		}
+		break;
+	}
+	
 	sharedList=[];
 	try{
 		sharedList=JSON.parse(under_storage.getItem("sharedList"));
@@ -55,6 +70,7 @@ function autoLoad() {
 		sharedList=[];
 	}
 	if (!sharedList)sharedList=[];
+	for (var i of nodes)i.updateTag();
 	setInterval(autoSave, 2000);
 }
 
@@ -88,7 +104,8 @@ function loadFromString(loadscript){
 		for (var i of loadedData) {
 			var p = makeNode(i.name, i.id);
 			p.setlongdesc(i.longdesc,true);
-			if (i.date) p.setDate(i.date);
+			if (i.date)p.setDate(i.date);
+			if (!isNaN(i.intv))p.setInterval(i.intv);
 			if (i.cd) p.creationDate=new Date().setTime(i.cd);
 		}
 		
