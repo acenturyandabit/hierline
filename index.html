@@ -104,7 +104,6 @@
 			<div id="st_lhs">
 				<p>Add a shared taskset</p>
 				<input id="st_addname" type="text" placeholder="Name"></input>
-				<input id="st_addkey" type="text" placeholder="Password"></input>
 				<button onclick="tryAddSet()">Add</button>
 			</div>
 			<div id="st_rhs">
@@ -115,11 +114,11 @@
 		</div>
 		<p id="sharedStat">	</p>
 		<div id="sharedbox">
+			<p id="psID">Your personal set ID is</p>
 			<h3>Shared sets</h3>
 		</div>
 	</div>
 	<div id="floatingMenu">
-		
 		<p onclick="showBin()" class="menubits">Deleted tasks</p>
 		<p onclick="saveFile()" class="menubits">Save to file</p>
 		<p onclick="sharedTasks()" class="menubits">Shared tasksets</p>

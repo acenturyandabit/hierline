@@ -1,5 +1,5 @@
 var saveList;
-
+var personalID;
 const MIME_TYPE = 'application/json';
 function saveFile() {
 	saveList=[];
@@ -27,6 +27,7 @@ function autoSave() {
 		localStorage.removeItem("data");
 		var under_storage = window.localStorage;
 		under_storage.setItem("sharedList",JSON.stringify(sharedList));
+		under_storage.setItem("personalID",personalID);
 		for (var i of nodes)saveList.push(i.toNodeBit());
 		under_storage.setItem('data_'+Date.now(), JSON.stringify(saveList));
 		var damt=0;
@@ -48,8 +49,6 @@ function autoLoad() {
 	for (var i in under_storage){
 		if (i.includes("data")){
 			setsarray.push({"time":i.split("_")[1],"data":under_storage.getItem(i)});
-			
-			
 		}
 	}
 	setsarray.sort(loadSort);
@@ -58,10 +57,14 @@ function autoLoad() {
 		try{
 			loadFromString(loadedData);
 		}catch (err){
+			console.log(err);
 			continue;
 		}
 		break;
 	}
+	for (var i of nodes)i.updateTag();
+	
+	
 	
 	sharedList=[];
 	try{
@@ -70,7 +73,8 @@ function autoLoad() {
 		sharedList=[];
 	}
 	if (!sharedList)sharedList=[];
-	for (var i of nodes)i.updateTag();
+	personalID=JSON.parse(under_storage.getItem("personalID"));
+	sharedSetup();
 	setInterval(autoSave, 2000);
 }
 
@@ -102,11 +106,8 @@ function loadFromString(loadscript){
 	if (loadedData) {
 		nodes = [];
 		for (var i of loadedData) {
-			var p = makeNode(i.name, i.id);
-			p.setlongdesc(i.longdesc,true);
-			if (i.date)p.setDate(i.date);
-			if (!isNaN(i.intv))p.setInterval(i.intv);
-			if (i.cd) p.creationDate=new Date().setTime(i.cd);
+			fromNodeBit(undefined,i);
+			
 		}
 		
 		//second pass for parents

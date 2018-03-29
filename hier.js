@@ -245,7 +245,9 @@ function attachTo(child,parent,auto){
 	}
 	changesMade=true;
 	child.updateTag();
-	showHierarchy();
+	if (!auto){
+		showHierarchy();
+	}
 }
 
 function splitsub(){

@@ -19,15 +19,6 @@ var currentScreen;
 2: timeline
 */
 
-var config = {
-apiKey: "AIzaSyDKPYbPTX6cVCDrv5vXNFKAjfO_gpPFgt8",
-authDomain: "heirline-3fb1c.firebaseapp.com",
-databaseURL: "https://heirline-3fb1c.firebaseio.com",
-projectId: "heirline-3fb1c",
-storageBucket: "heirline-3fb1c.appspot.com",
-messagingSenderId: "1080694993278"
-};
-
 function showCurrentScreen(){
 	switch(currentScreen){
 		case 0:
@@ -61,9 +52,6 @@ var MOUSE_OVER = false;
 function initialise() {
 	//get a random quote
 	$("#top_bar>div>p").html(starter_quotes[Math.round(Math.random()*starter_quotes.length)])
-	//initialise firebase
-	
-	firebase.initializeApp(config);
 	rootNode=new dataItem("Tasks","rootNode");
 	//generate some sample nodes
 	$("#loadFile").on("change", loadFile);

@@ -23,8 +23,7 @@ function doModeSort(a, b) {
 	return p;
 	else {
 		p = b.hierarchy_level() - a.hierarchy_level();
-		if (p)
-		return p;
+		if (p)return p;
 		else {
 			p = a.creationDate.valueOf() - b.creationDate.valueOf();
 			if (p)

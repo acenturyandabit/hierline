@@ -17,7 +17,7 @@ function showTimeline(){
 var tl_item_width;
 var tl_item_height;
 $(document).ready(tlInit);
-var sbdmax=20;
+var sbdmax=19;
 
 function seeNow(){
 	tlD=0;
@@ -123,6 +123,15 @@ function drawTimeline(){
 	}
 }
 
+
+
+function withinTime(i){
+	//is the node i within chour and cday?
+	
+	
+}
+
+
 function drawDay(){
 	TLsvg.clear();
 	//header row: days: 8
@@ -141,7 +150,7 @@ function drawDay(){
 	TLsvg.rect(tl_item_width*9, 20*tl_item_height).move(tl_item_width,tl_item_height-(chour.getHours()-8)*tl_item_height*2).fill("#9999ff");
 	//splitting nodes for multiple events on at the same time
 	for (var i of nodes){
-		if (i.taskDate){
+		if (i.taskDate && (i.taskDate.getHours()>=chour.getHours()||i.endDate.getHours()<=chour.getHours()+2) && (i.taskDate.getTime()>=cday.getTime() || i.endDate.getTime()<=(cday.getTime()))){
 			if (TLputcount[i.taskDate.valueOf()])TLputcount[i.taskDate.valueOf()]++;
 			else TLputcount[i.taskDate.valueOf()]=1;
 			chour.setDate(i.taskDate.getDate());
@@ -155,12 +164,12 @@ function drawDay(){
 	chour.setMonth(new Date().getMonth());
 	//little now arrow
 	var _nx=Math.floor((Date.now()-cday.valueOf())/(24*60*60*1000))*tl_item_width+tl_item_width;
-	var _ny=(Date.now()-chour.valueOf())/(30*60*1000)*tl_item_height-tl_item_height;
+	var _ny=(Date.now()-chour.valueOf())/(30*60*1000)*tl_item_height+tl_item_height;
 	TLsvg.line(_nx,_ny,_nx+tl_item_width,_ny).stroke({width:3,color:"#ff00ff"});
 	//draw events
 	var TLputcount={};
 	for (var i of nodes){
-		if (i.taskDate){
+		if (i.taskDate && (i.taskDate.getHours()>=chour.getHours()||i.endDate.getHours()<=chour.getHours()+2) && (i.taskDate.getTime()>=cday.getTime() || i.endDate.getTime()<=(cday.getTime()))){
 			chour.setDate(i.taskDate.getDate());
 			chour.setMonth(i.taskDate.getMonth());
 			if (TLputcount[i.taskDate.valueOf()])TLputcount[i.taskDate.valueOf()]++;
